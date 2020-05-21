@@ -1,6 +1,6 @@
 package com.entity;
 
-import java.sql.Date;
+import java.util.Date;
 
 /* 用户实体类 */
 public class User {
@@ -9,7 +9,7 @@ public class User {
 	
 	private String password;	// 密码
 	
-	private String telphone;	// 电话
+	private String telephone;	// 电话
 	
 	private String email;		// 电子邮件
 	
@@ -31,12 +31,12 @@ public class User {
 		this.password = password;
 	}
 
-	public String getTelphone() {
-		return telphone;
+	public String getTelephone() {
+		return telephone;
 	}
 
-	public void setTelphone(String telphone) {
-		this.telphone = telphone;
+	public void setTelephone(String telphone) {
+		this.telephone = telphone;
 	}
 
 	public String getEmail() {

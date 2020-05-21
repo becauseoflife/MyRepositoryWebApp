@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import com.dao.UserDBHelperDao;
 import com.entity.User;
@@ -12,10 +15,11 @@ import com.util.UserDBConn;
 public class UserDBGHelperDaoImpl implements UserDBHelperDao{
 
 	@Override
-	public void insert(User user) throws SQLException {
+	public boolean insert(User user) throws SQLException {
+		int flag = 0;
 		Connection conn = null;
 		PreparedStatement pstm = null;
-		String sql = "insert into user(`username`, `password`, `telphone`, `email`, `regdate`) VALUES (?, ?, ?, ?, ?)";
+		String sql = "insert into user(`username`, `password`, `telephone`, `email`, `regdate`) VALUES (?, ?, ?, ?, ?)";
 		
 		try {
 			conn = UserDBConn.getConnection();
@@ -23,11 +27,14 @@ public class UserDBGHelperDaoImpl implements UserDBHelperDao{
 			pstm = conn.prepareStatement(sql);
 			pstm.setString(1, user.getUserName());
 			pstm.setString(2, user.getPassword());
-			pstm.setString(3, user.getTelphone());
+			pstm.setString(3, user.getTelephone());
 			pstm.setString(4, user.getEmail());
-			pstm.setDate(5, user.getRegDate());
 			
-			pstm.executeUpdate();
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String registerDate  = df.format(user.getRegDate());
+			pstm.setString(5, registerDate);
+			
+			flag = pstm.executeUpdate();
 			
 			if (pstm != null) {
 				pstm.close();
@@ -36,11 +43,13 @@ public class UserDBGHelperDaoImpl implements UserDBHelperDao{
 		} catch (Exception e) {
 			System.out.println("插入数据操作异常");
 			e.printStackTrace();
-		} finally {
-/*			if (conn != null) {
-				conn.close();
-			}*/
-		}
+		} 
+		
+		// 插入成功
+		if(flag != 0)
+			return true;
+		
+		return false;
 		
 	}
 
@@ -63,11 +72,13 @@ public class UserDBGHelperDaoImpl implements UserDBHelperDao{
 			rs = pstm.executeQuery();
 			if(rs.next()){
 				user = new User();
-				user.setUserName(rs.getString(1));
-				user.setPassword(rs.getString(2));
-				user.setTelphone(rs.getString(3));
-				user.setEmail(rs.getString(4));
-				user.setRegDate(rs.getDate(5));
+				user.setUserName(rs.getString("username"));
+				user.setPassword(rs.getString("password"));
+				user.setTelephone(rs.getString("telephone"));
+				user.setEmail(rs.getString("email"));
+				
+				Timestamp t = rs.getTimestamp("regdate");
+				user.setRegDate(t);
 			}
 			
 			if (pstm != null) {
@@ -77,12 +88,8 @@ public class UserDBGHelperDaoImpl implements UserDBHelperDao{
 			// TODO: handle exception
 			System.out.println("查询操作异常：" + sql);
 			e.printStackTrace();
-		} finally {
-/*			if (conn != null) {
-				conn.close();
-			}*/
-		}
-		
+		} 
+
 		return user;
 	}
 

@@ -48,39 +48,41 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             <div class="col-lg-6 bg-white">
               <div class="form d-flex align-items-center">
                 <div class="content">
-                    <div class="form-group">
-                      <input id="register-username" class="input-material" type="text" name="registerUsername" placeholder="请输入用户名/姓名" >
-								      <div class="invalid-feedback">
-								        	用户名必须在2~10位之间
-								      </div>
-                    </div>
-                    <div class="form-group">
-                      <input id="register-password" class="input-material" type="password" name="registerPassword" placeholder="请输入密码"   >
-                    				  <div class="invalid-feedback">
-								        	密码必须在6~10位之间
-								      </div>
-                    </div>
-                    <div class="form-group">
-                      <input id="register-passwords" class="input-material" type="password" name="registerPasswords" placeholder="确认密码"   >
-                    				  <div class="invalid-feedback">
-								        	两次密码必须相同 且在6~10位之间
-								      </div>
-                    </div>
-                    <div class="form-group">
-                      <input id="register-telephone" class="input-material" type="text" maxlength="11" name="registerTelephone" placeholder="请输入联系电话" >
-								      <div class="invalid-feedback">
-								        	请输入11位的电话号码
-								      </div>
-                    </div>
-                    <div class="form-group">
-                      <input id="register-email" class="input-material" type="text" name="registerEmail" placeholder="请输入电子邮件" >
-								      <div class="invalid-feedback">
-								        	请输入电子邮件
-								      </div>
-                    </div>
-                    <div class="form-group">
-                      <button id="regbtn" type="button" name="registerSubmit" class="btn btn-primary">注册</button>
-                    </div>
+                	<form method="post" action="RegisterServlet" class="form-validate" id="registerFrom">
+	                    <div class="form-group">
+	                      <input id="register-username" class="input-material" type="text" name="registerUsername" placeholder="请输入用户名/姓名" >
+									      <div class="invalid-feedback">
+									        	用户名必须在2~10位之间
+									      </div>
+	                    </div>
+	                    <div class="form-group">
+	                      <input id="register-password" class="input-material" type="password" name="registerPassword" placeholder="请输入密码"   >
+	                    				  <div class="invalid-feedback">
+									        	密码必须在6~10位之间
+									      </div>
+	                    </div>
+	                    <div class="form-group">
+	                      <input id="register-passwords" class="input-material" type="password" name="registerPasswords" placeholder="确认密码"   >
+	                    				  <div class="invalid-feedback">
+									        	两次密码必须相同 且在6~10位之间
+									      </div>
+	                    </div>
+	                    <div class="form-group">
+	                      <input id="register-telephone" class="input-material" type="text" maxlength="11" name="registerTelephone" placeholder="请输入联系电话" >
+									      <div class="invalid-feedback">
+									        	请输入11位的电话号码
+									      </div>
+	                    </div>
+	                    <div class="form-group">
+	                      <input id="register-email" class="input-material" type="text" name="registerEmail" placeholder="请输入电子邮件" >
+									      <div class="invalid-feedback">
+									        	请输入电子邮件
+									      </div>
+	                    </div>
+	                    <div class="form-group">
+	                      <button id="regbtn" type="submit" name="registerSubmit" class="btn btn-primary">注册</button>
+	                    </div>
+	                 </form>
                   <small>已有账号?</small><a href="pages/login.jsp" class="signup">&nbsp;登录</a>
                 </div>
               </div>
@@ -194,6 +196,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     		})
     	})
     </script>
+    
+    <!-- 注册提示 --> 
+	<%
+     	Object message = session.getAttribute("message");
+     	if(message!=null && !message.equals("")){
+	%>
+      <script type="text/javascript">
+          alert("<%=message%>");
+      </script>
+  	<%
+  		session.setAttribute("message", null);
+  	 } %>  
+  	 
   </body>
   
 </html>
