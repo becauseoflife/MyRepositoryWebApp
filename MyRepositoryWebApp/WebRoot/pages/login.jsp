@@ -46,10 +46,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
               </div>
             </div>
             <!-- Form Panel    -->
+            
             <div class="col-lg-6 bg-white">
               <div class="form d-flex align-items-center">
                 <div class="content">
-                  <form method="post" action="login.html" class="form-validate" id="loginFrom">
+                  <form method="post" action="LoginServlet" class="form-validate" id="loginFrom">
                     <div class="form-group">
                       <input id="login-username" type="text" name="userName" required data-msg="请输入用户名" placeholder="用户名" value="admin" class="input-material">
                     </div>
@@ -76,6 +77,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
               </div>
             </div>
           </div>
+          
         </div>
       </div>
     </div>
@@ -141,7 +143,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			}
     		})*/
     	})
-    </script>  
+    </script>
+ 	<!-- 登录提示 --> 
+	<%
+     	Object message = session.getAttribute("message");
+     	if(message!=null && !message.equals("")){
+	%>
+      <script type="text/javascript">
+          alert("<%=message%>");
+      </script>
+  	<%
+  		session.setAttribute("message", null);
+  	 } %>  
 
   </body>
   
