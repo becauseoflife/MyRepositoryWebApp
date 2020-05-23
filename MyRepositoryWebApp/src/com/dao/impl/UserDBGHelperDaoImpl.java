@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 
 import com.dao.UserDBHelperDao;
 import com.entity.User;
-import com.util.UserDBConn;
+import com.util.DBConn;
 
 public class UserDBGHelperDaoImpl implements UserDBHelperDao{
 
@@ -22,7 +22,7 @@ public class UserDBGHelperDaoImpl implements UserDBHelperDao{
 		String sql = "insert into user(`username`, `password`, `telephone`, `email`, `regdate`) VALUES (?, ?, ?, ?, ?)";
 		
 		try {
-			conn = UserDBConn.getConnection();
+			conn = DBConn.getConnection();
 			
 			pstm = conn.prepareStatement(sql);
 			pstm.setString(1, user.getUserName());
@@ -64,7 +64,7 @@ public class UserDBGHelperDaoImpl implements UserDBHelperDao{
 		String sql = "select * from user where username=?";
 		
 		try {
-			conn = UserDBConn.getConnection();
+			conn = DBConn.getConnection();
 			
 			pstm = conn.prepareStatement(sql);
 			pstm.setString(1, userName);
@@ -83,6 +83,9 @@ public class UserDBGHelperDaoImpl implements UserDBHelperDao{
 			
 			if (pstm != null) {
 				pstm.close();
+			}
+			if (rs != null) {
+				rs.close();
 			}
 		} catch (Exception e) {
 			// TODO: handle exception

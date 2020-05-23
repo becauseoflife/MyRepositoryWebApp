@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /* 数据库连接类(单例模式) */
-public class UserDBConn {
+public class DBConn {
 
 	private static final String driver = "com.mysql.cj.jdbc.Driver";  // 数据库驱动
 	// 连接数据库的URL地址
@@ -30,7 +30,7 @@ public class UserDBConn {
 	}
 	
 	// 私有构造函数
-	private UserDBConn(){};
+	private DBConn(){};
 	
 	// 静态共有工厂方法，返回唯一实例
 	public static Connection getConnection() throws SQLException{

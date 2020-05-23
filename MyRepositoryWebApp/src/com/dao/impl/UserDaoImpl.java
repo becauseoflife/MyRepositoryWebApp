@@ -2,13 +2,17 @@ package com.dao.impl;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.dao.UserDBHelperDao;
 import com.dao.UserDao;
+import com.dao.WarehouseDBHelperDao;
+import com.entity.ClothingInfo;
 import com.entity.User;
 import com.simplefactory.UserDBHelperFactory;
 
@@ -17,6 +21,9 @@ public class UserDaoImpl implements UserDao {
 	
 	// 获取用户数据库操作类
 	private UserDBHelperDao userDBHelper = UserDBHelperFactory.getUserDBHelperDao();
+	
+	// 仓库表操作类
+	private WarehouseDBHelperDao warehouseDBHelper = new WarehouseDBHelperDaoImpl();
 
 	@Override
 	public boolean login(HttpServletRequest request) {
@@ -91,6 +98,30 @@ public class UserDaoImpl implements UserDao {
 		}
 		
 		return false;
+	}
+
+
+	@Override
+	public void queryClothing(HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		
+		String clothingID = request.getParameter("clothingId");
+		List<ClothingInfo> list = warehouseDBHelper.queryByClothingID(clothingID);
+
+		int sum = 0;	// 衣服总数
+		List<String> indexList = new ArrayList<String>();	// 衣服位置
+		
+		for (ClothingInfo c : list) {
+			sum += c.getNumber();
+			indexList.add(c.getShelves() + "-" + c.getLocation());
+		}
+		
+		// 保存到session中
+		HttpSession session = request.getSession();
+		session.setAttribute("isSearch", true);
+		session.setAttribute("clothingSum", sum);
+		session.setAttribute("indexList", indexList);
+		
 	}
 	
 

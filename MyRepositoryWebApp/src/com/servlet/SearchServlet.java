@@ -1,6 +1,8 @@
 package com.servlet;
 
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -9,19 +11,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.dao.UserDao;
 import com.dao.impl.UserDaoImpl;
-import com.entity.User;
+import com.entity.ClothingInfo;
 
 /**
- * Servlet implementation class LoginServlet
+ * Servlet implementation class SreachServlet
  */
-@WebServlet("/LoginServlet")
-public class LoginServlet extends HttpServlet {
+@WebServlet("/SearchServlet")
+public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginServlet() {
+    public SearchServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,7 +33,14 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doPost(request, response);
+		
+		// 用户业务逻辑实现类
+		UserDao userDao = new UserDaoImpl();
+		
+		userDao.queryClothing(request);
+		
+		// 转发
+		request.getRequestDispatcher("pages/home.jsp").forward(request, response);
 	}
 
 	/**
@@ -39,15 +48,7 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-
-		// 用户业务逻辑实现类
-		UserDao userDao = new UserDaoImpl();
-		
-		if(userDao.login(request)){
-			response.sendRedirect("pages/home.jsp");
-		}else{			
-			response.sendRedirect("pages/login.jsp");
-		}
+		doGet(request, response);
 	}
 
 }
