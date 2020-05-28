@@ -1,3 +1,6 @@
+<%@page import="com.entity.ClothingInfo"%>
+<%@page import="com.entity.Cart"%>
+<%@page import="java.lang.*"%>
 <%@ page language="java" import="java.util.*" contentType="text/html; charset=utf-8"%>
 <%
 String path = request.getContextPath();
@@ -9,7 +12,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   <head>
     <base href="<%=basePath%>">
     
-    <title>主页</title>
+    <title>创建订单</title>
     
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -21,7 +24,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <link rel="stylesheet" type="text/css" href="resources/bootstrap-4.5.0-dist/css/bootstrap.min.css">
     
     <script src="js/all.min.home.js" crossorigin="anonymous"></script>
-    
+    <script type="text/javascript" language="javascript">
+		 function delcfm(){
+		 	if(!window.confirm("确认要删除？")){
+		 		window.event.returnValue = false;
+		 	}
+		 }
+	 </script>
   </head>
   
   <body class="sb-nav-fixed">
@@ -86,79 +95,94 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         </div>
 
         <div id="layoutSidenav_content">
-				<main>
-					<div class="container-fluid">
-						<h1 class="mt-4">库存查询</h1>
-						<ol class="breadcrumb mb-4">
-							<li class="breadcrumb-item active">库存查询</li>
-						</ol>
+			<main>
+				<div class="container-fluid">
+					<h1 class="mt-4">创建订单</h1>
+					<ol class="breadcrumb mb-4">
+						<li class="breadcrumb-item"><a href="index.html">订单拣货</a></li>
+						<li class="breadcrumb-item active">创建订单</li>
+					</ol>
 
-						<div class="card mb-4">
-							<div class="card-body">输入服装ID查询该服装的数量和位置</div>
+					<div class="card mb-4">
+						<div class="card text-center">
+						  	<div class="card-header">
+						    	添加商品到订单中
+						  	</div>
+						  	<div class="card-body">
+								<form method="post" action="CartServlet?action=add">
+									<div class="input-group mb-3">
+									  	<label for="staticEmail" class="col-sm-1 col-form-label">服装ID</label>
+										<input type="text" name="clothingId" class="form-control" placeholder="请输入服装ID" aria-label="" aria-describedby="button-addon2">
+									</div>
+									<div class="input-group mb-3">
+									  	<label for="staticEmail" class="col-sm-1 col-form-label">数量</label>
+										<input type="text" name="number" class="form-control" placeholder="请输入订购数量" aria-label="" aria-describedby="button-addon1">
+									</div>
+	
+									<button type="submit" class="btn btn-primary myAdd-btn">添加</button>
+								</form>
+						  	</div>
 						</div>
-						<form method="post" action="SearchServlet">
-							<div class="input-group mb-3">
-								<div class="input-group-append">
-									<button type="submit" class="btn btn-primary  mySearch-btn" style="padding: 0 40px;">查询</button>
-							  	</div>
-							  	<div class="btn-input-space"></div>
-								<input type="text" name="clothingId" class="form-control" placeholder="请输入服装ID" aria-label="Recipient's username" aria-describedby="button-addon2">
-							</div>
-						</form>
-						
-						<div class="search-result-space"></div>
-						
-						<%
-							Object sum = session.getAttribute("clothingSum");
-							List<String> list = (List<String>)session.getAttribute("indexList");
-							Object isSearch = session.getAttribute("isSearch");
-							String str = "";
-							if(isSearch!=null){
-								if( (sum!=null) && ((int)sum!=0) && (list!=null) && (list.size()!=0) ){								  	
-						 %>
-									<div class="card">
-									  	<div class="card-header">
-									    	查询结果
-									  	</div>
-									  	<div class="card-body">
-									    	<blockquote class="blockquote mb-0">
-									      	<p>服装数量: <%=sum %> 件</p>
-									      	
-									      	<p>库存位置:
-									      	<%for(String s : list) 
-									      		str = s;
-									      	%>
-									      	<%=str%>&nbsp;
-									      	</p>
-									    	</blockquote>
-										</div> 
-									</div>
-							  <%
-							  	}else{
-							   %>	
-							   		<div class="card">
-									  	<div class="card-header">
-									    	查询结果
-									  	</div>
-									  	<div class="card-body">
-									   		<blockquote class="blockquote mb-0">
-									      	<p>仓库中没有找到该服饰</p>
-									    	</blockquote>
-										</div> 
-									</div>
-							<%
-								}
-							}
-							session.removeAttribute("isSearch");
-							session.removeAttribute("clothingSum");
-							session.removeAttribute("indexList");
-							%>
 					</div>
-				</main>
+
+					<div class="card mb-4">
+						<div class="card text-center">
+							<div class="card-header">
+								订购详情
+							</div>
+						  	<div class="card-body">
+
+								<table class="table table-bordered text-center">
+								  	<thead class="table-primary">
+									    <tr>
+										    <th scope="col">#</th>
+										    <th scope="col">订购产品</th>
+										    <th scope="col">数量</th>
+										    <th scope="col">操作</th>
+									    </tr>
+								  	</thead>
+								  	<tbody>
+								  	<!-- 循环开始 -->
+								  	<%
+								  		// 判断订单是否存在
+								  		if(request.getSession().getAttribute("order") != null)
+								  		{
+								  			Cart order = (Cart)request.getSession().getAttribute("order");
+								  			HashMap<ClothingInfo, Integer> goods = order.getGoods();
+								  			Set<ClothingInfo> items = goods.keySet();
+								  			Iterator<ClothingInfo> it = items.iterator();
+								  			int row = 0;
+								  			while(it.hasNext()){
+								  				ClothingInfo c = it.next();
+								  				row++;
+								  	 %>
+								    	<tr>
+								      		<th scope="row"><%=row %></th>
+								      		<td><%=c.getClothingID() %></td>
+								      		<td><%=goods.get(c) %></td>
+								      		<td><a href="CartServlet?action=delete&clothingId=<%=c.getClothingID() %>" onclick="return delcfm();">删除</a></td>
+								    	</tr>
+								  		<%
+								  			}
+								  		 %>
+								  	<%
+								  		}
+								  	 %>	
+								  	 <!-- 循环结束 -->
+									</tbody>
+								</table>
+								<form method="post" action="CartServlet?action=create_order">
+									<button type="submit" class="btn btn-primary">生成订单</button>
+								</form>
+						  	</div>
+						</div>
+					</div>
+
+				</div>
+			</main>
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; PanPan</div>
+                    <div class="d-flex align-item                 <div class="text-muted">Copyright &copy; PanPan</div>
                         <div>
                             <a href="#">Privacy Policy</a>
                             &middot;
@@ -169,12 +193,46 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             </footer>
         </div>
     </div>
-   
+    
+   <!-- Modal -->
+	<div id="myModal" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalCenterTitle">提示信息</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div id="message" class="modal-body">
+	        
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-primary" data-dismiss="modal">知道啦</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
     <!-- JQuery -->
     <script type="text/javascript" src="resources/jquery-3.4.1/jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="resources/bootstrap-4.5.0-dist/js/bootstrap.min.js"></script>
     
     <script src="resources/bootstrap-4.5.0-dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.home.js"></script>	
+    <script type="text/javascript">
+    	$('#myModal').modal('hide');
+    </script>
+    <%
+    	Object message = session.getAttribute("message");
+    	if(message!=null && !message.equals("")){
+     %>
+      <script type="text/javascript">
+      	$('#message').html("<%=message%>");
+          $('#myModal').modal('show');
+      </script>
+	<%
+		}
+		session.removeAttribute("message");
+	 %>
   </body>
 </html>

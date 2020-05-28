@@ -1,12 +1,14 @@
 package com.dao;
 
-import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 
-/* 用户业务逻辑类 */
+import com.entity.User;
+
+/* 用户数据库的操作 */
 public interface UserDao {
 
-	public boolean login(HttpServletRequest request);  		// 用户登录
-	public boolean register(HttpServletRequest request);	// 用户注册
+	public boolean insert(User user) throws SQLException;				// 插入
+	//public void delete(String userName) throws SQLException; 			// 删除
+	public User querryByUserName(String userName) throws SQLException;	// 查询
 	
-	public void queryClothing(HttpServletRequest request);	// 查询服装位置和数量 
 }

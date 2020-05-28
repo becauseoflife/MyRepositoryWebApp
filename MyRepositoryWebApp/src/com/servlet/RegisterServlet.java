@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dao.UserDao;
-import com.dao.impl.UserDaoImpl;
+import com.service.UserService;
+import com.service.impl.UserServiceImp;
 
 /**
  * Servlet implementation class RegisterServlet
@@ -40,12 +40,12 @@ public class RegisterServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		
 		// 用户业务逻辑实现类
-		UserDao userDao = new UserDaoImpl();
+		UserService userService = new UserServiceImp();
 		
-		if(userDao.register(request)){
-			response.sendRedirect("pages/login.jsp");
+		if(userService.register(request)){
+			response.sendRedirect("login.jsp");
 		}else{
-			response.sendRedirect("pages/register.jsp");
+			response.sendRedirect("register.jsp");
 		}
 	}
 

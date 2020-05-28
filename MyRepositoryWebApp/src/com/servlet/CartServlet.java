@@ -11,16 +11,18 @@ import com.service.UserService;
 import com.service.impl.UserServiceImp;
 
 /**
- * Servlet implementation class LoginServlet
+ * Servlet implementation class CartServlet
  */
-@WebServlet("/LoginServlet")
-public class LoginServlet extends HttpServlet {
+@WebServlet("/CartServlet")
+public class CartServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
+	private String action;		// 购物车的动作
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginServlet() {
+    public CartServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -30,7 +32,27 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doPost(request, response);
+
+		System.out.println("action:" + request.getParameter("action"));
+		
+		UserService service = new UserServiceImp();
+		
+		if(request.getParameter("action") != null)
+		{
+			this.action = request.getParameter("action");
+			if(action.equals("add"))		// 添加进购物车
+			{
+				service.addToCart(request, response);
+			}
+			if(action.equals("delete"))
+			{
+				service.deleteFormCart(request, response);
+			}
+			if(action.equals("create_order"))
+			{
+				service.createOrder(request, response);
+			}
+		}
 	}
 
 	/**
@@ -38,15 +60,7 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-
-		// 用户业务逻辑实现类
-		UserService userService = new UserServiceImp();
-		
-		if(userService.login(request)){
-			response.sendRedirect("pages/home.jsp");
-		}else{			
-			response.sendRedirect("login.jsp");
-		}
+		doGet(request, response);
 	}
 
 }

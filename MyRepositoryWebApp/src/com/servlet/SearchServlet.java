@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dao.UserDao;
-import com.dao.impl.UserDaoImpl;
 import com.entity.ClothingInfo;
+import com.service.UserService;
+import com.service.impl.UserServiceImp;
 
 /**
  * Servlet implementation class SreachServlet
@@ -35,9 +35,9 @@ public class SearchServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		
 		// 用户业务逻辑实现类
-		UserDao userDao = new UserDaoImpl();
+		UserService userService = new UserServiceImp();
 		
-		userDao.queryClothing(request);
+		userService.queryClothing(request);
 		
 		// 转发
 		request.getRequestDispatcher("pages/home.jsp").forward(request, response);

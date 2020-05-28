@@ -44,5 +44,38 @@ public class ClothingInfo {
 	public void setNumber(int number) {
 		this.number = number;
 	}
+
+	
+	// ÷ÿ–¥∑Ω∑®
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		int result = 17;
+		result = 31 * result + (clothingID == null ? 0 : clothingID.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		if(this==obj){
+			return true;
+		}
+		if(obj instanceof ClothingInfo){
+			ClothingInfo c = (ClothingInfo)obj;
+			if(this.clothingID.equals(c.getClothingID()))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else 
+		{
+			return false;
+		}
+	}
 	
 }

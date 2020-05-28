@@ -72,7 +72,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                     </div>
                   </form>
                   <br />
-                  <small>没有账号?</small><a href="pages/register.jsp" class="signup">&nbsp;注册</a>
+                  <small>没有账号?</small><a href="register.jsp" class="signup">&nbsp;注册</a>
                 </div>
               </div>
             </div>
