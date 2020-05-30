@@ -1,13 +1,16 @@
 package com.service.impl;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -15,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.fastjson.JSON;
 import com.dao.OrderDao;
 import com.dao.OrderGoodsDao;
 import com.dao.UserDao;
@@ -54,7 +58,7 @@ public class UserServiceImp implements UserService {
 		
 		User user = null;
 		try {
-			user = userDBHelper.querryByUserName(userName);
+			user = userDBHelper.queryByUserName(userName);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -264,6 +268,19 @@ public class UserServiceImp implements UserService {
 		// 创建订单ID
 		String orderID = CreateOrderID.getOrderIdGenerator().nextOrderID();
 		
+		// 订单为空
+		if( cart==null || cart.getGoods().isEmpty())
+		{
+			request.getSession().setAttribute("message", "订单订购列表为空！<br/>请先添加商品！");
+			try {
+				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
+			} catch (ServletException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
+		
 		// 创建订单记录
 		Order order = new Order();
 		order.setOrder_id(orderID);
@@ -283,17 +300,23 @@ public class UserServiceImp implements UserService {
 				OrderGoods g = new OrderGoods();
 				ClothingInfo c = it.next();
 				g.setOrder_id(orderID);
+				g.setShelves(c.getShelves());
+				g.setLocation(c.getLocation());
 				g.setClothingID(c.getClothingID());
 				g.setNumber(goods.get(c));
 				g.setPick_sign(OrderGoods.NOT_PICK);
 				g.setPick_time(null);
-				System.out.println("插入：" + g.getClothingID());
+
 				orderGoodsDBHelper.insert(g);
 			}
 			
 			// 跳转到订单拣货
+			request.getSession().setAttribute("message", "生成订单成功！");
+			// 将订单列表清空
+			cart = null;
+			request.getSession().setAttribute("order", cart);
 			try {
-				request.getRequestDispatcher("/pages/pick_good.jsp").forward(request, response);
+				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
 			} catch (ServletException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -310,7 +333,167 @@ public class UserServiceImp implements UserService {
 			}
 		}
 		
+	}
 
+
+	@Override
+	public void getOrderSelectOptions(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		
+		List<Order> list = orderBDHelper.queryOrderListByState(Order.UNRESOLVED);	// 获取未处理的订单
+		  
+		PrintWriter writer;
+		String jsonStr = JSON.toJSONString(list);
+		//System.out.println(jsonStr);
+		try {
+			writer = response.getWriter();
+			writer.write(jsonStr);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	@Override
+	public void getOrderInfo(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		String order_id = request.getParameter("select_orderId");
+
+		// 获取订单列表
+		List<OrderGoods> goodsList = orderGoodsDBHelper.queryByOrderID(order_id);
+		
+		// 保存在session中去
+		request.getSession().setAttribute("order_goods_list", goodsList);
+		try {
+			request.getRequestDispatcher("/pages/pick_good.jsp").forward(request, response);
+		} catch (ServletException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	@Override
+	public void pickGood(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		// 获取拣货的服装ID和订单列表
+		String clothingID = request.getParameter("clothingId");
+		List<OrderGoods> goodsList = (List<OrderGoods>) session.getAttribute("order_goods_list");
+		
+		// 从仓库中获取服饰
+		ClothingInfo clothingInfo = warehouseDBHelper.queryByClothingID(clothingID);
+		
+		// 从session中的获取订购信息
+		for (OrderGoods o : goodsList) {
+			if(clothingID.equals(o.getClothingID()))
+			{
+				// 已拣货
+				if(o.getPick_sign() == OrderGoods.PICK)
+				{
+					session.setAttribute("message", "商品:"+clothingID+" 已拣货<br/>请重新选择拣货商品");
+					try {
+						request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
+					} catch (ServletException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return;
+				}
+				
+				// 库存足够
+				if(clothingInfo.getNumber() >= o.getNumber()){
+					// 设置界面中的数据
+					o.setPick_sign(OrderGoods.PICK);
+					o.setPick_time(new Date());
+					DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					String time = df.format(o.getPick_time());
+					// 设置数据库中该商品的拣货操作
+					orderGoodsDBHelper.updateForPickSign(o.getOrder_id(), o.getClothingID(), OrderGoods.PICK, time);
+					// 仓库中的数量更新
+					warehouseDBHelper.updateForNumber(clothingID, o.getShelves(), o.getLocation(), clothingInfo.getNumber()-o.getNumber());
+					
+					session.setAttribute("message", "拣货成功！");
+
+					try {
+						request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
+					} catch (ServletException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+				else	// 库存不足
+				{
+					session.setAttribute("message", "库存不足！");
+					try {
+						request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
+					} catch (ServletException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+	}
+
+
+	@Override
+	public void orderResolved(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		
+		List<OrderGoods> goodsList = (List<OrderGoods>) session.getAttribute("order_goods_list");
+		String orderID  = goodsList.get(0).getOrder_id();
+		
+		// 判断订单是否拣货完毕
+		boolean flag = true;
+		
+		for (OrderGoods o : goodsList) {
+			if(o.getPick_sign() != OrderGoods.PICK)
+				flag = false;
+		}
+		
+		if(flag)	// 订单全部被拣货
+		{
+		
+			if(orderBDHelper.updateForState(orderID, Order.RESOLVED))	// 修改成功
+			{
+				session.removeAttribute("order_goods_list"); 		// 删除session中的订单信息
+				session.setAttribute("message", "处理成功！");
+				try {
+					request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
+				} catch (ServletException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else	// 修改失败
+			{
+				session.setAttribute("message", "处理失败！");
+				try {
+					request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
+				} catch (ServletException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		else	// 	订单有未拣货的产品
+		{
+			session.setAttribute("message", "还有产品未拣货！");
+			try {
+				request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
+			} catch (ServletException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 }

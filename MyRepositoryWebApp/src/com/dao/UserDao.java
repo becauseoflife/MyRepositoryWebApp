@@ -9,6 +9,6 @@ public interface UserDao {
 
 	public boolean insert(User user) throws SQLException;				// ≤Â»Î
 	//public void delete(String userName) throws SQLException; 			// …æ≥˝
-	public User querryByUserName(String userName) throws SQLException;	// ≤È—Ø
+	public User queryByUserName(String userName) throws SQLException;	// ≤È—Ø
 	
 }

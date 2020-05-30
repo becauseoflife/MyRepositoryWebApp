@@ -54,7 +54,7 @@ public class UserDaoImpl implements UserDao{
 	}
 
 	@Override
-	public User querryByUserName(String userName) throws SQLException {
+	public User queryByUserName(String userName) throws SQLException {
 		// TODO Auto-generated method stub
 		
 		Connection conn = null;

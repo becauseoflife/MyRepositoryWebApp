@@ -5,6 +5,7 @@ import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import com.dao.WarehouseDao;
 import com.entity.ClothingInfo;
@@ -95,6 +96,39 @@ public class WarehouseDaoImpl implements WarehouseDao {
 			e.printStackTrace();*/
 		}
 		return result;
+	}
+
+	@Override
+	public boolean updateForNumber(String clothingID, String shelves, String location, int number) {
+		// TODO Auto-generated method stub
+		
+		int flag = 0;
+		Connection conn = null;
+		PreparedStatement pstm = null;
+		String sql = "update `warehouse` set `number`=? where "
+				+ "`shelves`='"+shelves+"' AND"
+				+ " `location`='"+location+"' AND "
+				+ "clothingID='"+clothingID+"'";
+		
+		try {
+			conn = DBConn.getConnection();
+			
+			pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, number);
+			
+			flag = pstm.executeUpdate();
+			
+			if (pstm != null) {
+				pstm.close();
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(flag != 0)
+			return true;
+		return false;
 	}
 
 }

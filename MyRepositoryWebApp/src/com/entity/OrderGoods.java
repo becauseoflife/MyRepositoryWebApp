@@ -13,6 +13,10 @@ public class OrderGoods {
 	
 	private String clothingID;		// 服装ID
 	
+	private String shelves;			// 货架
+	
+	private String location;		// 货位
+	
 	private int number;				// 数量
 	
 	private int pick_sign;			// 拣货标志
@@ -35,6 +39,22 @@ public class OrderGoods {
 
 	public void setClothingID(String clothingID) {
 		this.clothingID = clothingID;
+	}
+	
+	public String getShelves() {
+		return shelves;
+	}
+
+	public void setShelves(String shelves) {
+		this.shelves = shelves;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 	public int getNumber() {

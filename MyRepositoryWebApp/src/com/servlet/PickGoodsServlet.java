@@ -11,18 +11,18 @@ import com.service.UserService;
 import com.service.impl.UserServiceImp;
 
 /**
- * Servlet implementation class CartServlet
+ * Servlet implementation class PickGoodsServlet
  */
-@WebServlet("/CartServlet")
-public class CartServlet extends HttpServlet {
+@WebServlet("/PickGoodsServlet")
+public class PickGoodsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-	private String action;		// 购物车的动作
+	private String action;		// 拣货界面的动作
 	
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CartServlet() {
+    public PickGoodsServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -32,25 +32,29 @@ public class CartServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-
-		//System.out.println("action:" + request.getParameter("action"));
+		
+		System.out.println("action:" + request.getParameter("action"));
 		
 		UserService service = new UserServiceImp();
 		
 		if(request.getParameter("action") != null)
 		{
 			this.action = request.getParameter("action");
-			if(action.equals("add"))		// 添加进购物车
+			if(action.equals("getSelectOption"))
 			{
-				service.addToCart(request, response);
+				service.getOrderSelectOptions(request, response);
 			}
-			if(action.equals("delete"))
+			if(action.equals("getOrderInfo"))
 			{
-				service.deleteFormCart(request, response);
+				service.getOrderInfo(request, response);
 			}
-			if(action.equals("create_order"))
+			if(action.equals("pickGood"))
 			{
-				service.createOrder(request, response);
+				service.pickGood(request, response);
+			}
+			if (action.equals("orderResolved"))
+			{
+				service.orderResolved(request, response);
 			}
 		}
 	}

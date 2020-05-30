@@ -19,12 +19,12 @@ import javax.servlet.ServletResponse;
 public class EncodingFilter implements Filter{
 
 	public EncodingFilter() {
-		System.out.println("过滤器构造！");
+		//System.out.println("过滤器构造！");
 	}
 	
 	@Override
 	public void destroy() {
-		System.out.println("过滤器销毁！");
+		//System.out.println("过滤器销毁！");
 	}
 
 	
@@ -43,7 +43,7 @@ public class EncodingFilter implements Filter{
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		System.out.println("过滤器初始化！");
+		//System.out.println("过滤器初始化！");
 	}
 	
 	
