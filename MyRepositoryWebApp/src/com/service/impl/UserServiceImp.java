@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.event.IIOReadProgressListener;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,8 @@ import com.dao.impl.OrderDaoImpl;
 import com.dao.impl.OrderGoodsDaoImpl;
 import com.dao.impl.WarehouseDaoImpl;
 import com.entity.Cart;
+import com.entity.Check;
+import com.entity.CheckTable;
 import com.entity.ClothingInfo;
 import com.entity.Order;
 import com.entity.OrderGoods;
@@ -34,6 +37,7 @@ import com.entity.User;
 import com.service.UserService;
 import com.simplefactory.UserDBHelperFactory;
 import com.util.CreateOrderID;
+import com.util.ExportExcelUtil;
 
 public class UserServiceImp implements UserService {
 
@@ -128,7 +132,7 @@ public class UserServiceImp implements UserService {
 
 
 	@Override
-	public void queryClothing(HttpServletRequest request) {
+	public void queryClothingById(HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		
 		String clothingID = request.getParameter("clothingId");
@@ -144,9 +148,10 @@ public class UserServiceImp implements UserService {
 		
 		// 保存到session中
 		HttpSession session = request.getSession();
-		session.setAttribute("isSearch", true);
-		session.setAttribute("clothingSum", sum);
-		session.setAttribute("indexList", indexList);
+		session.setAttribute("clothingID", clothingID);	// 服装ID
+		session.setAttribute("isSearch", true);			// 是否查找
+		session.setAttribute("clothingSum", sum);		// 服装数量
+		session.setAttribute("indexList", indexList);	// 位置列表
 		
 	}
 
@@ -493,6 +498,165 @@ public class UserServiceImp implements UserService {
 				e.printStackTrace();
 			}
 		}
+		
+	}
+
+
+	@Override
+	public void queryClothingByLocation(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		
+		// 获取位置信息
+		String shelves = request.getParameter("shelves");
+		String location = request.getParameter("location");
+ 		//System.out.println("位置信息："+ shelves + "-" + location);
+		
+		// 盘点表格对象为空，则创建
+		if(session.getAttribute("checkTable")== null)
+		{
+			CheckTable checkTable = new CheckTable();
+			session.setAttribute("checkTable", checkTable);		// 将盘点表放到session中
+		}
+		
+		// 从仓库中获取服饰信息
+		ClothingInfo c = warehouseDBHelper.queryByLocation(shelves, location);
+		
+		// 将服饰对象放入session中
+		session.setAttribute("clothingInfo", c);
+		
+		// 转发
+		try {
+			request.getRequestDispatcher("pages/check.jsp").forward(request, response);
+		} catch (ServletException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+	@Override
+	public void updateClothingNumber(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		
+		HttpSession session = request.getSession();
+		
+		// 获取跟新的数量
+		int updateNum = Integer.parseInt(request.getParameter("updateNum"));
+		
+		// 获取被跟新的服装
+		ClothingInfo c = (ClothingInfo)session.getAttribute("clothingInfo");
+		
+		// 获取盘点表格对象
+		CheckTable checkTable = (CheckTable)session.getAttribute("checkTable");
+		
+		if(c!=null && checkTable!=null){
+		
+			// 更新数据库中的数量
+			warehouseDBHelper.updateForNumber(c.getClothingID(), c.getShelves(), c.getLocation(), updateNum);
+			
+			// 盘盈和盘亏的值
+			int surplus = 0;
+			int loss = 0;
+	
+			if(c.getNumber() > updateNum)	// 盘亏
+			{
+				loss = Math.abs(c.getNumber()-updateNum);
+			}
+			else if(c.getNumber() < updateNum)	// 盘盈
+			{
+				surplus = Math.abs(c.getNumber()-updateNum);
+			}
+			
+			// 盘点对象
+			Check check = new Check(
+					c.getClothingID(),
+					c.getShelves()+"-"+c.getLocation(),
+					c.getNumber(),
+					updateNum,
+					surplus,
+					loss);
+			
+			// 盘点表格记录
+			checkTable.addCheck(check);
+			
+			// 将服饰删除，放置重复操作
+			session.removeAttribute("clothingInfo");
+	
+		}	
+			
+		// 转发
+		try {
+			request.getRequestDispatcher("pages/check.jsp").forward(request, response);
+		} catch (ServletException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	@Override
+	public void deleteFormCheckTable(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		// 获取删除的行数
+		String row = request.getParameter("row");
+		
+		// 取得删除的对象
+		Check check = (Check)session.getAttribute(row);
+			
+		// 获取盘点表格对象
+		CheckTable checkTable = (CheckTable)session.getAttribute("checkTable");
+		
+		// 删除
+		checkTable.deleteCheck(check);
+		
+		// 转发
+		try {
+			request.getRequestDispatcher("pages/check.jsp").forward(request, response);
+		} catch (ServletException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+	@Override
+	public void exportExcel(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		// 获取盘点表格对象
+		CheckTable checkTable = (CheckTable)session.getAttribute("checkTable");
+		
+		if(checkTable == null)
+		{
+			// 转发
+			try {
+				request.getRequestDispatcher("pages/check.jsp").forward(request, response);
+			} catch (ServletException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
+		
+		// 创建导出工具类
+		ExportExcelUtil<Check> excelUtil = new ExportExcelUtil<Check>();
+		
+		response.reset();
+		response.setHeader("Content-Disposition", "attachment; filename=check.xlsx");//要保存的文件名
+		response.setContentType("application/octet-stream; charset=utf-8");
+		
+		try {
+			excelUtil.ExportExcel("盘盈和盘亏报表", checkTable.getTitle(), checkTable.getDataSet(), response.getOutputStream(), ExportExcelUtil.EXCEl_FILE_2007);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// 将盘点表格对象从session中删除
+		session.removeAttribute("checkTable");
 		
 	}
 	

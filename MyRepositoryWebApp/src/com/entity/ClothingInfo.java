@@ -61,7 +61,8 @@ public class ClothingInfo {
 		if(this==obj){
 			return true;
 		}
-		if(obj instanceof ClothingInfo){
+		if(obj instanceof ClothingInfo)
+		{
 			ClothingInfo c = (ClothingInfo)obj;
 			if(this.clothingID.equals(c.getClothingID()))
 			{
@@ -77,5 +78,13 @@ public class ClothingInfo {
 			return false;
 		}
 	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.shelves + "-" + this.location;
+	}
+	
+	
 	
 }

@@ -33,7 +33,7 @@ public class PickGoodsServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-		System.out.println("action:" + request.getParameter("action"));
+		//System.out.println("action:" + request.getParameter("action"));
 		
 		UserService service = new UserServiceImp();
 		

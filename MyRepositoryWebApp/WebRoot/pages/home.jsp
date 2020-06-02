@@ -71,7 +71,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                                 	<a class="nav-link" href="pages/pick_good.jsp">拣货操作</a>
                                 </nav>
                             </div>
-	                        <a id="my-nav-link"  class="nav-link" href="">
+	                        <a id="my-nav-link"  class="nav-link" href="pages/check.jsp">
 	                        	<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
 	                           	<text>库存盘点</text>
 	                        </a>
@@ -109,6 +109,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						<div class="search-result-space"></div>
 						
 						<%
+							String clothingID = (String)session.getAttribute("clothingID");
 							Object sum = session.getAttribute("clothingSum");
 							List<String> list = (List<String>)session.getAttribute("indexList");
 							Object isSearch = session.getAttribute("isSearch");
@@ -118,7 +119,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						 %>
 									<div class="card">
 									  	<div class="card-header">
-									    	查询结果
+									    	服装ID:&nbsp;<strong><%=clothingID %></strong>&nbsp;的查询结果
 									  	</div>
 									  	<div class="card-body">
 									    	<blockquote class="blockquote mb-0">
@@ -149,6 +150,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							<%
 								}
 							}
+							session.removeAttribute("clothingID");
 							session.removeAttribute("isSearch");
 							session.removeAttribute("clothingSum");
 							session.removeAttribute("indexList");

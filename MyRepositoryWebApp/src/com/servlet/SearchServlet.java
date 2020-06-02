@@ -37,7 +37,7 @@ public class SearchServlet extends HttpServlet {
 		// 用户业务逻辑实现类
 		UserService userService = new UserServiceImp();
 		
-		userService.queryClothing(request);
+		userService.queryClothingById(request);
 		
 		// 转发
 		request.getRequestDispatcher("pages/home.jsp").forward(request, response);

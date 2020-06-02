@@ -131,4 +131,40 @@ public class WarehouseDaoImpl implements WarehouseDao {
 		return false;
 	}
 
+	@Override
+	public ClothingInfo queryByLocation(String shelves, String location) {
+		// TODO Auto-generated method stub
+		Connection conn = null;
+		PreparedStatement pstm = null;
+		ResultSet rs = null;
+		ClothingInfo result = null;
+		String sql = "select * from warehouse where `shelves`='" + shelves + "' AND `location`='" + location + "'" ;
+		
+		try {
+			conn = DBConn.getConnection();
+			
+			pstm = conn.prepareStatement(sql);
+			rs = pstm.executeQuery();
+			if (rs.next()) {
+				result = new ClothingInfo();
+				result.setShelves(rs.getString("shelves"));
+				result.setLocation(rs.getString("location"));
+				result.setClothingID(rs.getString("clothingID"));
+				result.setNumber(rs.getInt("number"));
+			}
+			if (pstm != null) {
+				pstm.close();
+			}
+			if (rs != null) {
+				rs.close();
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
 }

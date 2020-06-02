@@ -39,6 +39,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					}
 					else
 					{
+						$("#orderSelect").append("<option>--请选择--</option>");
 						for(let i=0; i<res.length; i++)
 						{
 							$("#orderSelect").append("<option value="+ res[i].order_id +">" + res[i].order_id + "</option>");
@@ -102,7 +103,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                                 	<a class="nav-link" href="pages/pick_good.jsp">拣货操作</a>
                                 </nav>
                             </div>
-	                        <a id="my-nav-link"  class="nav-link" href="">
+	                        <a id="my-nav-link"  class="nav-link" href="pages/check.jsp">
 	                        	<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
 	                           	<text>库存盘点</text>
 	                        </a>
