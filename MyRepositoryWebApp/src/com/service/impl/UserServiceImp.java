@@ -132,11 +132,14 @@ public class UserServiceImp implements UserService {
 
 
 	@Override
-	public void queryClothingById(HttpServletRequest request) {
+	public boolean queryClothingById(HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		
 		String clothingID = request.getParameter("clothingId");
 		List<ClothingInfo> list = warehouseDBHelper.queryListByClothingID(clothingID);
+		
+/*		if(list.size()==0)	// 没有查到记录	
+			return false;*/
 
 		int sum = 0;	// 衣服总数
 		List<String> indexList = new ArrayList<String>();	// 衣服位置
@@ -153,6 +156,8 @@ public class UserServiceImp implements UserService {
 		session.setAttribute("clothingSum", sum);		// 服装数量
 		session.setAttribute("indexList", indexList);	// 位置列表
 		
+		return true;
+		
 	}
 
 
@@ -162,6 +167,8 @@ public class UserServiceImp implements UserService {
 		String clothingID = request.getParameter("clothingId");
 		int number = Integer.parseInt(request.getParameter("number"));
 		HttpSession session = request.getSession();
+		if(number<0)
+			return;
 		
 		// 是否是第一次添加物品，需要给session中添加一个新的购物车对象
 		if(session.getAttribute("order") == null)
@@ -173,19 +180,13 @@ public class UserServiceImp implements UserService {
 		
 		// 获取仓库中的服饰
 		List<ClothingInfo> cloList = warehouseDBHelper.queryListByClothingID(clothingID);
-		// 判断服饰是否存在
+		// 服饰不存在
 		if(cloList.size() == 0){
 			session.setAttribute("message", "服装ID"+ clothingID + "不存在！<br/> 请重新输入！");
-			try {
-				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
-			} catch (ServletException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			return;
 		}
 		
-		
+		// 服饰存在
 		int total = 0;
 		int orderNum = number; 
 		// 计算出仓库中服饰的总数量
@@ -201,14 +202,8 @@ public class UserServiceImp implements UserService {
 		{
 			session.setAttribute("message",
 					"库存数量："+ total + 
-					"<br/> 订购数量" + orderNum + "数量超出库存数量，请重新添加!"
+					"<br/> 订购数量：" + orderNum + "<br/>数量超出库存数量，请重新添加!"
 					);
-			try {
-				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
-			} catch (ServletException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			return;
 		}
 		
@@ -217,12 +212,7 @@ public class UserServiceImp implements UserService {
 		if(cart.addGoodsInCart(cloList.get(0), number))
 		{
 			//session.setAttribute("message", "添加成功！");
-			try {
-				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
-			} catch (ServletException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			return;
 		}
 		
 		
@@ -242,22 +232,11 @@ public class UserServiceImp implements UserService {
 		// 从购物车中删除
 		if(cart.removeGoodFormCart(deleteItem))
 		{
-			//request.getSession().setAttribute("message", "删除成功！");
-			try {
-				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
-			} catch (ServletException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			request.getSession().setAttribute("message", "删除成功！");
 		}
 		else
 		{
-			try {
-				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
-			} catch (ServletException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			request.getSession().setAttribute("message", "删除失败！");
 		}
 		
 	}
@@ -277,12 +256,6 @@ public class UserServiceImp implements UserService {
 		if( cart==null || cart.getGoods().isEmpty())
 		{
 			request.getSession().setAttribute("message", "订单订购列表为空！<br/>请先添加商品！");
-			try {
-				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
-			} catch (ServletException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			return;
 		}
 		
@@ -320,22 +293,11 @@ public class UserServiceImp implements UserService {
 			// 将订单列表清空
 			cart = null;
 			request.getSession().setAttribute("order", cart);
-			try {
-				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
-			} catch (ServletException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			return;
 		}
 		else
 		{
 			request.getSession().setAttribute("message", "生成订单失败！");
-			try {
-				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
-			} catch (ServletException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 		
 	}
@@ -371,13 +333,8 @@ public class UserServiceImp implements UserService {
 		
 		// 保存在session中去
 		request.getSession().setAttribute("order_goods_list", goodsList);
-		try {
-			request.getRequestDispatcher("/pages/pick_good.jsp").forward(request, response);
-		} catch (ServletException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
+		return;
 	}
 
 
@@ -394,22 +351,17 @@ public class UserServiceImp implements UserService {
 		
 		// 从session中的获取订购信息
 		for (OrderGoods o : goodsList) {
+			// 订单中有该服饰记录
 			if(clothingID.equals(o.getClothingID()))
 			{
 				// 已拣货
 				if(o.getPick_sign() == OrderGoods.PICK)
 				{
 					session.setAttribute("message", "商品:"+clothingID+" 已拣货<br/>请重新选择拣货商品");
-					try {
-						request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
-					} catch (ServletException | IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					return;
 				}
 				
-				// 库存足够
+				// 库存足够 进行拣货过程
 				if(clothingInfo.getNumber() >= o.getNumber()){
 					// 设置界面中的数据
 					o.setPick_sign(OrderGoods.PICK);
@@ -423,39 +375,20 @@ public class UserServiceImp implements UserService {
 					
 					session.setAttribute("message", "拣货成功！");
 
-					try {
-						request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
-					} catch (ServletException | IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					return;
 					
 				}
-				else	// 库存不足
+				// 库存不足
+				else	
 				{
 					session.setAttribute("message", "库存不足！");
-					try {
-						request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
-					} catch (ServletException | IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					return;
 				}
 			}
-			else
-			{
-				session.setAttribute("message", "订单中不存在该商品！");
-				try {
-					request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
-				} catch (ServletException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		}
-		
+		// 订单中不存在该商品
+		session.setAttribute("message", "订单中不存在该服装！");
+		return;
 	}
 
 
@@ -477,38 +410,24 @@ public class UserServiceImp implements UserService {
 		
 		if(flag)	// 订单全部被拣货
 		{
-		
-			if(orderBDHelper.updateForState(orderID, Order.RESOLVED))	// 修改成功
+			// 数据库状态字段修改成功
+			if(orderBDHelper.updateForState(orderID, Order.RESOLVED))	
 			{
 				session.removeAttribute("order_goods_list"); 		// 删除session中的订单信息
 				session.setAttribute("message", "处理成功！");
-				try {
-					request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
-				} catch (ServletException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return;
 			}
-			else	// 修改失败
+			// 数据库状态字段修改失败
+			else	
 			{
 				session.setAttribute("message", "处理失败！");
-				try {
-					request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
-				} catch (ServletException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return;
 			}
 		}
 		else	// 	订单有未拣货的产品
 		{
 			session.setAttribute("message", "还有产品未拣货！");
-			try {
-				request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
-			} catch (ServletException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			return;
 		}
 		
 	}
@@ -535,15 +454,15 @@ public class UserServiceImp implements UserService {
 		ClothingInfo c = warehouseDBHelper.queryByLocation(shelves, location);
 		
 		// 将服饰对象放入session中
-		session.setAttribute("clothingInfo", c);
-		
-		// 转发
-		try {
-			request.getRequestDispatcher("pages/check.jsp").forward(request, response);
-		} catch (ServletException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(c!=null)
+		{
+			session.setAttribute("clothingInfo", c);
 		}
+		else
+		{
+			session.setAttribute("message", "位置输入有误！<br/>请重新输入！<br/>例: <br/>货架:  A<br/>货位:  1 ");
+		}
+
 	}
 
 
@@ -596,15 +515,7 @@ public class UserServiceImp implements UserService {
 			session.removeAttribute("clothingInfo");
 	
 		}	
-			
-		// 转发
-		try {
-			request.getRequestDispatcher("pages/check.jsp").forward(request, response);
-		} catch (ServletException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		return;
 	}
 
 
@@ -624,18 +535,12 @@ public class UserServiceImp implements UserService {
 		// 删除
 		checkTable.deleteCheck(check);
 		
-		// 转发
-		try {
-			request.getRequestDispatcher("pages/check.jsp").forward(request, response);
-		} catch (ServletException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return;
 	}
 
 
 	@Override
-	public void exportExcel(HttpServletRequest request, HttpServletResponse response) {
+	public boolean exportExcel(HttpServletRequest request, HttpServletResponse response) {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
 		// 获取盘点表格对象
@@ -643,14 +548,8 @@ public class UserServiceImp implements UserService {
 		
 		if(checkTable == null)
 		{
-			// 转发
-			try {
-				request.getRequestDispatcher("pages/check.jsp").forward(request, response);
-			} catch (ServletException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return;
+			session.setAttribute("message", "已导出！");
+			return false;
 		}
 		
 		// 创建导出工具类
@@ -670,21 +569,16 @@ public class UserServiceImp implements UserService {
 		// 将盘点表格对象从session中删除
 		session.removeAttribute("checkTable");
 		
+		return true;
 	}
 
 
 	@Override
 	public void outLogin(HttpServletRequest request, HttpServletResponse response) {
 		// TODO Auto-generated method stub
-		request.getSession().invalidate();		// 销毁session
 		
-		// 重定向到登录界面
-		try {
-			response.sendRedirect("login.jsp");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		request.getSession().invalidate();		// 销毁session
+	
 	}
 	
 }

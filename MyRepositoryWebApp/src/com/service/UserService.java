@@ -9,7 +9,7 @@ public interface UserService {
 	public boolean login(HttpServletRequest request);  		// 用户登录
 	public boolean register(HttpServletRequest request);	// 用户注册
 	
-	public void queryClothingById(HttpServletRequest request);	// 查询服装位置和数量
+	public boolean queryClothingById(HttpServletRequest request);	// 查询服装位置和数量
 	
 	public void addToCart(HttpServletRequest request, HttpServletResponse response);		// 添加商品到订单中
 	public void deleteFormCart(HttpServletRequest request, HttpServletResponse response);	// 从订单中删除商品
@@ -23,7 +23,7 @@ public interface UserService {
 	public void queryClothingByLocation(HttpServletRequest request, HttpServletResponse response);	// 盘点查询
 	public void updateClothingNumber(HttpServletRequest request, HttpServletResponse response);		// 盘点更新
 	public void deleteFormCheckTable(HttpServletRequest request, HttpServletResponse response);		// 盘点表的行删除
-	public void exportExcel(HttpServletRequest request, HttpServletResponse response);				// 导出报表
+	public boolean exportExcel(HttpServletRequest request, HttpServletResponse response);				// 导出报表
 	
 	public void outLogin(HttpServletRequest request, HttpServletResponse response);		// 退出登录
 }

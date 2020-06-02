@@ -47,14 +47,17 @@ public class PickGoodsServlet extends HttpServlet {
 			if(action.equals("getOrderInfo"))
 			{
 				service.getOrderInfo(request, response);
+				response.sendRedirect("pages/pick_good.jsp");
 			}
 			if(action.equals("pickGood"))
 			{
 				service.pickGood(request, response);
+				response.sendRedirect("pages/pick_good.jsp");
 			}
 			if (action.equals("orderResolved"))
 			{
 				service.orderResolved(request, response);
+				response.sendRedirect("pages/pick_good.jsp");
 			}
 		}
 	}

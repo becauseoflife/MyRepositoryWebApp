@@ -142,7 +142,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							   %>	
 							   		<div class="card">
 									  	<div class="card-header">
-									    	查询结果
+									    	服装ID:&nbsp;<strong><%=clothingID %></strong>&nbsp;的查询结果
 									  	</div>
 									  	<div class="card-body">
 									   		<blockquote class="blockquote mb-0">

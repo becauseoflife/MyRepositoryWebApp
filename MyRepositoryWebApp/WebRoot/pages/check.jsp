@@ -156,8 +156,28 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						
 						<%
 							}
+						%>
+						<% 
+							Object message = session.getAttribute("message");
+							if(message!=null){
 						 %>
-					
+							<div class="card mb-4">
+								<div class="card">
+								  	<div class="card-header">
+								    	操作提示
+								  	</div>
+								  	<div class="card-body">
+								   		<blockquote class="blockquote mb-0">
+								      	<p><%=message %></p>
+								    	</blockquote>
+									</div>
+								</div>
+							</div>
+						<%
+							session.removeAttribute("message");
+							}
+						 %>
+						 
 						<%
 							CheckTable checkTable = (CheckTable)session.getAttribute("checkTable");
 							if(checkTable!=null && checkTable.getDataSet().size()!=0)

@@ -43,14 +43,17 @@ public class CartServlet extends HttpServlet {
 			if(action.equals("add"))		// 添加进购物车
 			{
 				service.addToCart(request, response);
+				response.sendRedirect("pages/create_order.jsp");
 			}
 			if(action.equals("delete"))
 			{
 				service.deleteFormCart(request, response);
+				response.sendRedirect("pages/create_order.jsp");
 			}
 			if(action.equals("create_order"))
 			{
 				service.createOrder(request, response);
+				response.sendRedirect("pages/create_order.jsp");
 			}
 		}
 	}

@@ -40,18 +40,22 @@ public class CheckServlet extends HttpServlet {
 			if(action.equals("query"))
 			{
 				service.queryClothingByLocation(request, response);
+				response.sendRedirect("pages/check.jsp");
 			}
 			if (action.equals("update")) 
 			{
 				service.updateClothingNumber(request, response);
+				response.sendRedirect("pages/check.jsp");
 			}
 			if(action.equals("delete"))
 			{
 				service.deleteFormCheckTable(request, response);
+				response.sendRedirect("pages/check.jsp");
 			}
 			if(action.equals("exportExcel"))
 			{
-				service.exportExcel(request, response);
+				if(!service.exportExcel(request, response))
+					response.sendRedirect("pages/check.jsp");
 			}
 		}
 	}

@@ -38,7 +38,6 @@ public class SearchServlet extends HttpServlet {
 		UserService userService = new UserServiceImp();
 		
 		userService.queryClothingById(request);
-		
 		// ×ª·¢
 		request.getRequestDispatcher("pages/home.jsp").forward(request, response);
 	}

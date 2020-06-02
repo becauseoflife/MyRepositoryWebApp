@@ -223,7 +223,6 @@ public class ExportExcelUtil<T> {
 		// Ð´µ½Êä³öÁ÷
 		try {
 			workbook.write(out);
-			out.close();
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -409,7 +408,7 @@ public class ExportExcelUtil<T> {
 	
 	
 	// ²âÊÔ
-	public static void main(String[] args){
+/*	public static void main(String[] args){
 			ExportExcelUtil<Check> excelUtil = new ExportExcelUtil<Check>();
 			
 			List<Check> list = new ArrayList<Check>(); 
@@ -435,6 +434,6 @@ public class ExportExcelUtil<T> {
 				e.printStackTrace();
 				System.out.println("Ê§°Ü");
 			}
-	}
+	}*/
 	
 }

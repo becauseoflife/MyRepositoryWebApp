@@ -30,9 +30,10 @@ public class OutLoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		
 		UserService service = new UserServiceImp();
 		service.outLogin(request, response);
+		response.sendRedirect("login.jsp");		// 重定向到登录界面
 	}
 
 	/**
