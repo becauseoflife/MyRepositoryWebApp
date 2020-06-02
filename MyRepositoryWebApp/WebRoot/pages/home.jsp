@@ -1,3 +1,4 @@
+<%@page import="com.entity.User"%>
 <%@ page language="java" import="java.util.*" contentType="text/html; charset=utf-8"%>
 <%
 String path = request.getContextPath();
@@ -42,10 +43,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">设置</a>
-                    <a class="dropdown-item" href="#">Activity Log</a>
+                    <a class="dropdown-item" href="">个人信息</a>
+                    <a class="dropdown-item" href="">修改信息</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="login.html">退出登录</a>
+                    <a class="dropdown-item" href="OutLoginServlet">退出登录</a>
                 </div>
             </li>
         </ul>
@@ -80,7 +81,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">用户:</div>
-                    <text>Admin</text>
+                    <% User user = (User)session.getAttribute("user"); %>
+                    <text><%=user.getUserName() %></text>
                 </div>
             </nav>
         </div>

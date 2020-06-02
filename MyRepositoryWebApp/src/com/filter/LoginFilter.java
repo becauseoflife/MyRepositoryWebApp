@@ -31,19 +31,19 @@ public class LoginFilter implements Filter{
 		HttpServletRequest req = (HttpServletRequest)request;
 		HttpServletResponse res = (HttpServletResponse)response;
 		
-		System.out.println("拦截了：" + req.getRequestURL());
+		//System.out.println("拦截了：" + req.getRequestURL());
 		
 		HttpSession session = req.getSession();
 		User user = (User)session.getAttribute("user");
 		
 		// 简单判断缓存中是否有用户
-/*		if(user != null){
+		if(user != null){
 			chain.doFilter(request, response);
 		}else{
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
-		}*/
+		}
 		
-		chain.doFilter(request, response);
+		//chain.doFilter(request, response);
 	}
 
 	@Override

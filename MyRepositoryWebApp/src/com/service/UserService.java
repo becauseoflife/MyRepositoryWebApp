@@ -24,4 +24,6 @@ public interface UserService {
 	public void updateClothingNumber(HttpServletRequest request, HttpServletResponse response);		// 盘点更新
 	public void deleteFormCheckTable(HttpServletRequest request, HttpServletResponse response);		// 盘点表的行删除
 	public void exportExcel(HttpServletRequest request, HttpServletResponse response);				// 导出报表
+	
+	public void outLogin(HttpServletRequest request, HttpServletResponse response);		// 退出登录
 }

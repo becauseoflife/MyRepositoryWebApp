@@ -216,7 +216,7 @@ public class UserServiceImp implements UserService {
 		// 上面两个条件都满足
 		if(cart.addGoodsInCart(cloList.get(0), number))
 		{
-			session.setAttribute("message", "添加成功！");
+			//session.setAttribute("message", "添加成功！");
 			try {
 				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
 			} catch (ServletException | IOException e) {
@@ -242,7 +242,7 @@ public class UserServiceImp implements UserService {
 		// 从购物车中删除
 		if(cart.removeGoodFormCart(deleteItem))
 		{
-			request.getSession().setAttribute("message", "删除成功！");
+			//request.getSession().setAttribute("message", "删除成功！");
 			try {
 				request.getRequestDispatcher("/pages/create_order.jsp").forward(request, response);
 			} catch (ServletException | IOException e) {
@@ -658,6 +658,21 @@ public class UserServiceImp implements UserService {
 		// 将盘点表格对象从session中删除
 		session.removeAttribute("checkTable");
 		
+	}
+
+
+	@Override
+	public void outLogin(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		request.getSession().invalidate();		// 销毁session
+		
+		// 重定向到登录界面
+		try {
+			response.sendRedirect("login.jsp");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }
