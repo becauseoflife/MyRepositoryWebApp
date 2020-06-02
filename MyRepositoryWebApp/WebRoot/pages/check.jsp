@@ -25,7 +25,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    	<!-- Bootstrap -->
     <link rel="stylesheet" type="text/css" href="resources/bootstrap-4.5.0-dist/css/bootstrap.min.css">
     
-    <script src="js/all.min.home.js" crossorigin="anonymous"></script>
+    <script src="js/all.min.js" crossorigin="anonymous"></script>
     <script type="text/javascript" language="javascript">
 		 function delcfm(){
 		 	if(!window.confirm("确认要删除？")){
@@ -106,7 +106,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						<li class="breadcrumb-item active">库存盘点</li>
 					</ol>
 
-					<form method="post" action="CheckServlet?action=query">
+					<form method="post" action="CheckServlet?action=query" onsubmit="return checkSearchInput();">
 						<div class="card mb-4">
 							<div class="card-header">
 								输入库存位置信息查询该位置产品的ID和数量
@@ -114,14 +114,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							<div class="card-body">
 								<div class="input-group mb-3">
 								  	<label for="staticEmail" class="col-sm-1 col-form-label">货架</label>
-									<input type="text" name="shelves" class="form-control" placeholder="请输入货架" aria-label="" aria-describedby="button-addon2">
+									<input id="shelvesInput" type="text" name="shelves" class="form-control" placeholder="请输入货架" aria-label="" aria-describedby="button-addon2">
 								</div>
 								<div class="input-group mb-3">
 								  	<label for="staticEmail" class="col-sm-1 col-form-label">货位</label>
-									<input type="text" name="location" class="form-control" placeholder="请输入货位" aria-label="" aria-describedby="button-addon1">
+									<input id="locationInput" type="text" name="location" class="form-control" placeholder="请输入货位" aria-label="" aria-describedby="button-addon1">
 								</div>
 								<div class="input-group mb-3">
-									<button type="submit" class="btn btn-primary mySearchBtn">查询</button>
+									<button id="searchBtn" type="submit" class="btn btn-primary mySearchBtn">查询</button>
 								</div>
 							</div>
 						</div>
@@ -143,11 +143,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							      	<p>服装ID&nbsp;:&nbsp;<%=c.getClothingID() %></p>
 							      	<p>&nbsp;数&nbsp;量&nbsp;&nbsp;:&nbsp;<%=c.getNumber() %>&emsp;件</p>
 							    	</blockquote>
-							    	<form method="post" action="CheckServlet?action=update">
+							    	<form method="post" action="CheckServlet?action=update" onsubmit="return checkUpdateInput();"> 
 							    		<div class="input-group mb-3">
-											<button type="submit" class="btn btn-primary  myUpdate-btn" style="padding: 0 40px;">更新</button>
+											<button id="updateBtn" type="submit" class="btn btn-primary  myUpdate-btn" style="padding: 0 40px;">更新</button>
 										
-											<input type="text" name="updateNum" class="form-control" placeholder="请输入盘点数量" aria-label="Recipient's username" aria-describedby="button-addon2">
+											<input id="numInput" type="text" name="updateNum" class="form-control" placeholder="请输入盘点数量" aria-label="Recipient's username" aria-describedby="button-addon2">
 										</div>
 									</form>
 								</div>
@@ -240,6 +240,99 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <script type="text/javascript" src="resources/bootstrap-4.5.0-dist/js/bootstrap.min.js"></script>
     
     <script src="resources/bootstrap-4.5.0-dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="js/scripts.home.js"></script>	
+    <script src="js/scripts.js"></script>
+    <script type="text/javascript">
+      /*错误class  form-control is-invalid
+  		正确class  form-control is-valid*/
+  		let searchSubmit = false;
+  		let updateSubmit = false;
+  		
+  		$(function(){
+  			let flagShelvesInput = false;
+  			let flagLocationInput = false;
+  			
+  			let shelves, location;
+  			
+  			$("#shelvesInput").change(function(){
+  				shelves = $("#shelvesInput").val();
+  				if(shelves==""||shelves==null)
+  				{
+  					$("#shelvesInput").removeClass("form-control is-valid")
+    				$("#shelvesInput").addClass("form-control is-invalid");
+    				flagShelvesInput=false;
+  				}
+  				else
+  				{
+  					$("#shelvesInput").removeClass("form-control is-invalid")
+    				$("#shelvesInput").addClass("form-control  is-valid");
+    				flagShelvesInput=true;
+  				}
+  			})
+  			
+  			$("#locationInput").change(function(){
+  				location = $("#locationInput").val();
+  				if(location==""||location==null)
+  				{
+  					$("#locationInput").removeClass("form-control is-valid")
+    				$("#locationInput").addClass("form-control is-invalid");
+    				flagLocationInput=false;
+  				}
+  				else
+  				{
+  					$("#locationInput").removeClass("form-control is-invalid")
+    				$("#locationInput").addClass("form-control  is-valid");
+    				flagLocationInput=true;
+  				}
+  			})
+  			
+  			$("#searchBtn").click(function(){
+  				if(flagShelvesInput&&flagLocationInput)
+  				{
+  					searchSubmit=true;
+  				}
+  				else
+  				{
+  					if(!flagShelvesInput)
+  						$("#shelvesInput").addClass("form-control is-invalid");
+  					if(!flagLocationInput)
+  						$("#locationInput").addClass("form-control is-invalid");
+  				}
+  			})
+  			
+  			let flagNumInput=false;
+  			
+  			let numInput;
+  			$("#numInput").change(function(){
+  				numInput = $("#numInput").val();
+  				if(numInput==""||numInput==null)
+  				{
+  					$("#numInput").removeClass("form-control is-valid")
+    				$("#numInput").addClass("form-control is-invalid");
+    				flagNumInput=false;
+  				}
+  				else
+  				{
+  					$("#numInput").removeClass("form-control is-invalid")
+    				$("#numInput").addClass("form-control  is-valid");
+    				flagNumInput=true;
+  				}
+  			})
+  			
+  			$("#updateBtn").click(function(){
+  				if(flagNumInput)
+  					updateSubmit=true;
+  				else
+  					$("#numInput").addClass("form-control is-invalid");
+  			})
+  		})
+  		
+  		function checkSearchInput(){
+  			return searchSubmit;
+  		}
+  		
+  		function checkUpdateInput(){
+  			return updateSubmit;
+  		}
+    </script>
   </body>
 </html>

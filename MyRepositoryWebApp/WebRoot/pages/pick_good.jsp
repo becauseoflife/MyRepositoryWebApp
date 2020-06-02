@@ -24,7 +24,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    	<!-- Bootstrap -->
     <link rel="stylesheet" type="text/css" href="resources/bootstrap-4.5.0-dist/css/bootstrap.css">
     
-    <script src="js/all.min.home.js" crossorigin="anonymous"></script>
+    <script src="js/all.min.js" crossorigin="anonymous"></script>
     <script>
     	function getOrderId(){
 			$.ajax({
@@ -234,13 +234,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						    	输入产品ID或者扫描产品标签
 						  	</div>
 						  	<div class="card-body">
-								<form method="post" action="PickGoodsServlet?action=pickGood">
+								<form method="post" action="PickGoodsServlet?action=pickGood" onsubmit="return pickSubmit();">
 									<div class="input-group mb-3">
 									  	<label for="staticEmail" class="col-sm-1 col-form-label">服装ID</label>
-										<input type="text" name="clothingId" class="form-control" placeholder="请输入服装ID" aria-label="" aria-describedby="button-addon2">
+										<input id="pickIdInput" type="text" name="clothingId" class="form-control" placeholder="请输入服装ID" aria-label="" aria-describedby="button-addon2">
 									</div>
 	
-									<button type="submit" class="btn btn-primary myAdd-btn">拣货</button>
+									<button id="pickBtn" type="submit" class="btn btn-primary myAdd-btn">拣货</button>
 								</form>
 						  	</div>
 						</div>
@@ -290,7 +290,48 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <script type="text/javascript" src="resources/bootstrap-4.5.0-dist/js/bootstrap.min.js"></script>
     
     <script src="resources/bootstrap-4.5.0-dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="js/scripts.home.js"></script>	
+    <script src="js/scripts.js"></script>
+        <script type="text/javascript">
+      /*错误class  form-control is-invalid
+  		正确class  form-control is-valid*/
+  		let flagPickGood = false;	
+  		$(function(){
+  			let flagPickInput = false;
+  			
+  			let clothingId;
+  			$("#pickIdInput").change(function(){
+  				clothingId = $("#pickIdInput").val();
+  				if(clothingId==""||clothingId==null)
+  				{
+  					$("#pickIdInput").removeClass("form-control is-valid")
+    				$("#pickIdInput").addClass("form-control is-invalid");
+    				flagPickInput=false;
+  				}
+  				else
+  				{
+  					$("#pickIdInput").removeClass("form-control is-invalid")
+    				$("#pickIdInput").addClass("form-control  is-valid");
+    				flagPickInput=true;
+  				}
+  			})
+  			
+  			$("#pickBtn").click(function(){
+  				if(flagPickInput)
+  				{
+  					flagPickGood = true;
+  				}
+  				else
+  				{
+  					$("#pickIdInput").addClass("form-control is-invalid");
+  				}
+  			})
+  		})
+  		
+  		function pickSubmit(){
+  			return flagPickGood;
+  		}
+    </script>
+    
     <script type="text/javascript">
     	$('#myModal').modal('hide');
     </script>

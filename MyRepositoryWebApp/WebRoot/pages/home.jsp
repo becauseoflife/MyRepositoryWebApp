@@ -21,7 +21,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    	<!-- Bootstrap -->
     <link rel="stylesheet" type="text/css" href="resources/bootstrap-4.5.0-dist/css/bootstrap.min.css">
     
-    <script src="js/all.min.home.js" crossorigin="anonymous"></script>
+    <script src="js/all.min.js" crossorigin="anonymous"></script>
     
   </head>
   
@@ -98,13 +98,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						<div class="card mb-4">
 							<div class="card-body">输入服装ID查询该服装的数量和位置</div>
 						</div>
-						<form method="post" action="SearchServlet">
+						<form method="post" action="SearchServlet" onsubmit="return checkSearchInput(this);">
 							<div class="input-group mb-3">
 								<div class="input-group-append">
-									<button type="submit" class="btn btn-primary  mySearch-btn" style="padding: 0 40px;">查询</button>
+									<button id="searchBtn" type="submit" class="btn btn-primary mySearch-btn" style="padding: 0 40px;">查询</button>
 							  	</div>
 							  	<div class="btn-input-space"></div>
-								<input type="text" name="clothingId" class="form-control" placeholder="请输入服装ID" aria-label="Recipient's username" aria-describedby="button-addon2">
+								<input id="clothingIdInput" type="text" name="clothingId" class="form-control" placeholder="请输入服装ID" aria-label="Recipient's username">
+									
 							</div>
 						</form>
 						
@@ -117,7 +118,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							Object isSearch = session.getAttribute("isSearch");
 							String str = "";
 							if(isSearch!=null){
-								if( (sum!=null) && ((int)sum!=0) && (list!=null) && (list.size()!=0) ){								  	
+								if( (sum!=null) && (list!=null) && (list.size()!=0) ){								  	
 						 %>
 									<div class="card">
 									  	<div class="card-header">
@@ -179,6 +180,48 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <script type="text/javascript" src="resources/bootstrap-4.5.0-dist/js/bootstrap.min.js"></script>
     
     <script src="resources/bootstrap-4.5.0-dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="js/scripts.home.js"></script>	
+    <script src="js/scripts.js"></script>	
+    <script>
+  	   /*错误class  form-control is-invalid
+  		正确class  form-control is-valid*/
+  		let searchFlag = false;
+  		$(function(){
+  			let flagInput = false;
+  			let clothingId;
+  			
+  			$("#clothingIdInput").change(function()
+  			{
+  				clothingId=$("#clothingIdInput").val();
+  				if(clothingId==""||clothingId==null)
+  				{
+  					$("#clothingIdInput").removeClass("form-control is-valid")
+    				$("#clothingIdInput").addClass("form-control is-invalid");
+    				flagInput=false;
+  				}
+  				else
+  				{
+  					$("#clothingIdInput").removeClass("form-control is-invalid")
+    				$("#clothingIdInput").addClass("form-control  is-valid");
+    				flagInput=true;
+  				}
+  			})
+  			$("#searchBtn").click(function(){
+  				if(flagInput)
+  				{
+  					searchFlag=true;
+  				}
+  				else
+  				{
+  					$("#clothingIdInput").addClass("form-control is-invalid");
+  				}	
+  			})
+  		})
+  		
+  		function checkSearchInput(obj)
+  		{
+  			return searchFlag;
+  		}
+  		
+    </script>
   </body>
 </html>

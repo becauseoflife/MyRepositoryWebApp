@@ -31,7 +31,7 @@ public class LoginFilter implements Filter{
 		HttpServletRequest req = (HttpServletRequest)request;
 		HttpServletResponse res = (HttpServletResponse)response;
 		
-		//System.out.println("¿πΩÿ¡À£∫" + req.getRequestURL());
+		System.out.println("¿πΩÿ¡À£∫" + req.getRequestURL());
 		
 		HttpSession session = req.getSession();
 		User user = (User)session.getAttribute("user");

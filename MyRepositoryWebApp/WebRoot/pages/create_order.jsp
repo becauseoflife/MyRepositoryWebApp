@@ -24,7 +24,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    	<!-- Bootstrap -->
     <link rel="stylesheet" type="text/css" href="resources/bootstrap-4.5.0-dist/css/bootstrap.min.css">
     
-    <script src="js/all.min.home.js" crossorigin="anonymous"></script>
+    <script src="js/all.min.js" crossorigin="anonymous"></script>
     <script type="text/javascript" language="javascript">
 		 function delcfm(){
 		 	if(!window.confirm("确认要删除？")){
@@ -111,17 +111,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						    	添加商品到订单中
 						  	</div>
 						  	<div class="card-body">
-								<form method="post" action="CartServlet?action=add">
+								<form method="post" action="CartServlet?action=add" onsubmit="return checkInput();">
 									<div class="input-group mb-3">
 									  	<label for="staticEmail" class="col-sm-1 col-form-label">服装ID</label>
-										<input type="text" name="clothingId" class="form-control" placeholder="请输入服装ID" aria-label="" aria-describedby="button-addon2">
+										<input id="clothingIdInput" type="text" name="clothingId" class="form-control" placeholder="请输入服装ID" aria-label="" aria-describedby="button-addon2">
 									</div>
 									<div class="input-group mb-3">
 									  	<label for="staticEmail" class="col-sm-1 col-form-label">数量</label>
-										<input type="text" name="number" class="form-control" placeholder="请输入订购数量" aria-label="" aria-describedby="button-addon1">
+										<input id="numInput" type="text" name="number" class="form-control" placeholder="请输入订购数量" aria-label="" aria-describedby="button-addon1">
 									</div>
 	
-									<button type="submit" class="btn btn-primary myAdd-btn">添加</button>
+									<button id="addBtn" type="submit" class="btn btn-primary myAdd-btn">添加</button>
 								</form>
 						  	</div>
 						</div>
@@ -220,12 +220,75 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <script type="text/javascript" src="resources/bootstrap-4.5.0-dist/js/bootstrap.min.js"></script>
     
     <script src="resources/bootstrap-4.5.0-dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="js/scripts.home.js"></script>	
+    <script src="js/scripts.js"></script>	
+    <script type="text/javascript">
+      /*错误class  form-control is-invalid
+  		正确class  form-control is-valid*/
+    	let addSubmitFlag = false;
+    	$(function(){
+    		let flagClothingIdInput = false;
+    		let flagnumInput = false;
+    		
+    		let clothingId, num;
+    		
+    		/* 服饰ID输入框 */
+    		$("#clothingIdInput").change(function(){
+    			clothingId = $("#clothingIdInput").val();
+    			if(clothingId==""||clothingId==null)
+    			{
+    				$("#clothingIdInput").removeClass("form-control is-valid")
+    				$("#clothingIdInput").addClass("form-control is-invalid");
+    				flagClothingIdInput=false;
+    			}
+    			else
+    			{
+    			  	$("#clothingIdInput").removeClass("form-control is-invalid")
+    				$("#clothingIdInput").addClass("form-control  is-valid");
+    				flagClothingIdInput=true;
+    			}
+    		})
+    		
+    		$("#numInput").change(function(){
+    			num = $("#numInput").val();
+    			if(num==""||num==null)
+    			{
+    				$("#numInput").removeClass("form-control is-valid")
+    				$("#numInput").addClass("form-control is-invalid");
+    				flagnumInput=false;
+    			}
+    			else
+    			{
+    				$("#numInput").removeClass("form-control is-invalid")
+    				$("#numInput").addClass("form-control  is-valid");
+    				flagnumInput=true;
+    			}
+    		})
+    		
+    		$("#addBtn").click(function(){
+    			if(flagClothingIdInput&&flagnumInput)
+    			{
+    				addSubmitFlag=true;
+    			}
+    			else
+    			{
+    				if(!flagClothingIdInput)
+    					$("#clothingIdInput").addClass("form-control is-invalid");
+    				if(!flagnumInput)
+    					$("#numInput").addClass("form-control is-invalid");
+    			}
+    		})
+    	})
+    	
+    	function checkInput(){
+    		return addSubmitFlag;
+    	}
+    </script>
+    
     <script type="text/javascript">
     	$('#myModal').modal('hide');
     </script>
     <%
-    	Object message = session.getAttribute("message");
+    	String message = (String)session.getAttribute("message");
     	if(message!=null && !message.equals("")){
      %>
       <script type="text/javascript">

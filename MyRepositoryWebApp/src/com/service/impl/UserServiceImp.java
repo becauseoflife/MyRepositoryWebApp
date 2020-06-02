@@ -83,7 +83,7 @@ public class UserServiceImp implements UserService {
 		}
 		else if(user != null && !user.getPassword().equals(password))
 		{
-			session.setAttribute("massage", "密码错误，请重新输入!");
+			session.setAttribute("message", "密码错误，请重新输入!");
 			return false;
 		}
 		
@@ -101,7 +101,7 @@ public class UserServiceImp implements UserService {
 		String email = request.getParameter("registerEmail");			// 电子邮件
 		
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-		System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
+		//System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
 	
 		// 新建用户
 		User user = new User();
@@ -118,7 +118,7 @@ public class UserServiceImp implements UserService {
 				session.setAttribute("message", "注册成功！");
 				return true;
 			}else{
-				session.setAttribute("message", "注册失败！");
+				session.setAttribute("message", "注册失败！<br/>"+userName+"用户名已存在！");
 				return false;
 			}
 			
@@ -429,6 +429,7 @@ public class UserServiceImp implements UserService {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					return;
 					
 				}
 				else	// 库存不足
@@ -440,6 +441,17 @@ public class UserServiceImp implements UserService {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					return;
+				}
+			}
+			else
+			{
+				session.setAttribute("message", "订单中不存在该商品！");
+				try {
+					request.getRequestDispatcher("pages/pick_good.jsp").forward(request, response);
+				} catch (ServletException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}

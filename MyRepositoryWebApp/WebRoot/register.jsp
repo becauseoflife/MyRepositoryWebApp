@@ -18,9 +18,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="robots" content="all,follow">
     
+
     <link rel="stylesheet" href="css/styles.login.register.css" id="theme-stylesheet">
     <!-- Bootstrap -->
-    <link rel="stylesheet" type="text/css" href="resources/bootstrap-4.5.0-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="resources/bootstrap-4.5.0-dist/css/bootstrap.css">
     
     <!-- JQuery -->
     <script type="text/javascript" src="resources/jquery-3.4.1/jquery-3.4.1.min.js"></script>
@@ -48,7 +49,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             <div class="col-lg-6 bg-white">
               <div class="form d-flex align-items-center">
                 <div class="content">
-                	<form method="post" action="RegisterServlet" class="form-validate" id="registerFrom">
+                	<form method="post" action="RegisterServlet" class="form-validate" id="registerFrom" onsubmit="return checkAll(this);">
 	                    <div class="form-group">
 	                      <input id="register-username" class="input-material" type="text" name="registerUsername" placeholder="请输入用户名/姓名" >
 									      <div class="invalid-feedback">
@@ -74,7 +75,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 									      </div>
 	                    </div>
 	                    <div class="form-group">
-	                      <input id="register-email" class="input-material" type="text" name="registerEmail" placeholder="请输入电子邮件" >
+	                      <input id="register-email" class="input-material" type="email" name="registerEmail" placeholder="请输入电子邮件" >
 									      <div class="invalid-feedback">
 									        	请输入电子邮件
 									      </div>
@@ -92,22 +93,42 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       </div>
     </div>
     
+    <!-- Modal -->
+	<div id="myModal" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalCenterTitle">提示信息</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div id="message" class="modal-body">
+	        
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-primary" data-dismiss="modal">知道啦</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
     <!-- JavaScript files-->
-    <script>
+    <script type="text/javascript">
+    	let formFlag = false;
     	$(function(){
     		/*错误class  form-control is-invalid
     		正确class  form-control is-valid*/
-    		var flagName = false;
-    		var flagPas = false;
-    		var flagPass = false;
-    		var flagTele = false;
-    		var flagEmail = false;
+    		let flagName = false;
+    		let flagPas = false;
+    		let flagPass = false;
+    		let flagTele = false;
+    		let flagEmail = false;
     		
-    		var name,passWord,passWords,telephone, email;
+    		let name,passWord,passWords,telephone, email;
     		/*验证用户名*/
     		$("#register-username").change(function(){
     			name=$("#register-username").val();
-    			if(name.length<2||name.length>10){
+    			if(name.length<2||name.length>10||name==""){
     				$("#register-username").removeClass("form-control is-valid")
     				$("#register-username").addClass("form-control is-invalid");
     				flagName=false;
@@ -120,7 +141,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     		/*验证密码*/
     		$("#register-password").change(function(){
     			passWord=$("#register-password").val();
-    			if(passWord.length<6||passWord.length>18){
+    			if(passWord.length<6||passWord.length>18||passWord==""){
     				$("#register-password").removeClass("form-control is-valid")
     				$("#register-password").addClass("form-control is-invalid");
     				flagPas=false;
@@ -133,7 +154,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     		/*验证确认密码*/
     		$("#register-passwords").change(function(){
     			passWords=$("#register-passwords").val();
-    			if((passWord!=passWords)||(passWords.length<6||passWords.length>18)){
+    			if((passWord!=passWords)||(passWords.length<6||passWords.length>18)||passWords==""){
     				$("#register-passwords").removeClass("form-control is-valid")
     				$("#register-passwords").addClass("form-control is-invalid");
     				flagPass=false;
@@ -146,7 +167,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     		/* 验证联系号码 */
     		$("#register-telephone").change(function(){
     			telephone = $("#register-telephone").val();
-    			if(telephone.length != 11){
+    			if(telephone.length != 11||telephone==""){
     				$("#register-telephone").removeClass("form-control is-valid")
     				$("#register-telephone").addClass("form-control is-invalid");
     				flagTele=false;
@@ -159,7 +180,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     		/* 验证电子邮件 */
     		$("#register-email").change(function(){
     			email = $("#register-email").val();
-    			if(email == ""){
+    			if(email == ""||email==null){
     				$("#register-email").removeClass("form-control is-valid")
     				$("#register-email").addClass("form-control is-invalid");
     				flagEmail=false;
@@ -173,9 +194,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     		/* 点击注册按钮 */
     		$("#regbtn").click(function(){
     			if(flagName&&flagPas&&flagPass&&flagTele&&flagEmail){
+    				formFlag = true;
     				localStorage.setItem("name",name);
     				localStorage.setItem("passWord",passWord);
-    				location="pages/login.jsp"
     			}else{
     				if(!flagName){
     					$("#register-username").addClass("form-control is-invalid");
@@ -187,7 +208,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     					$("#register-passwords").addClass("form-control is-invalid");
     				}
     				if(!flagTele){
-    					$("#register-telephone").addClass("form-control is-invalid")
+    					$("#register-telephone").addClass("form-control is-invalid");
     				}
     				if(!flagEmail){
     					$("#register-email").addClass("form-control is-invalid");
@@ -195,20 +216,27 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			}
     		})
     	})
+    	
+    	function checkAll(obj){
+			return formFlag;
+    	}
     </script>
-    
-    <!-- 注册提示 --> 
-	<%
-     	Object message = session.getAttribute("message");
-     	if(message!=null && !message.equals("")){
-	%>
+    <!-- 注册提示 -->
+	<script type="text/javascript">
+    	$('#myModal').modal('hide');
+    </script>
+    <%
+    	Object message = session.getAttribute("message");
+    	if(message!=null && !message.equals("")){
+     %>
       <script type="text/javascript">
-          alert("<%=message%>");
+      	$('#message').html("<%=message%>");
+          $('#myModal').modal('show');
       </script>
-  	<%
-  		session.setAttribute("message", null);
-  	 } %>  
-  	 
+	<%
+		}
+		session.removeAttribute("message");
+	 %>
   </body>
   
 </html>
