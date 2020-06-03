@@ -26,4 +26,7 @@ public interface UserService {
 	public boolean exportExcel(HttpServletRequest request, HttpServletResponse response);				// 导出报表
 	
 	public void outLogin(HttpServletRequest request, HttpServletResponse response);		// 退出登录
+	
+	public void getEmptyPositon(HttpServletRequest request, HttpServletResponse response);	// 获得上架的空位置
+	public void putOnGood(HttpServletRequest request, HttpServletResponse response);		// 物品上架
 }

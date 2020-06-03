@@ -86,6 +86,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	                           	<text>库存盘点</text>
 	                        </a>
                         <div class="sb-sidenav-menu-heading">其他</div>
+                             <a id="my-nav-link" class="nav-link" href="pages/putOnGood.jsp">
+                        		<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            	<text>货品上架</text>
+                        	</a>
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
@@ -250,7 +254,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     		
     		$("#numInput").change(function(){
     			num = $("#numInput").val();
-    			if(num==""||num==null)
+    			if(num==""||num==null || num<=0)
     			{
     				$("#numInput").removeClass("form-control is-valid")
     				$("#numInput").addClass("form-control is-invalid");

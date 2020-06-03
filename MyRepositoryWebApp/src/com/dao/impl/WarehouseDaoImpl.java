@@ -167,4 +167,79 @@ public class WarehouseDaoImpl implements WarehouseDao {
 		return result;
 	}
 
+	@Override
+	public List<ClothingInfo> queryListEmptyPosition() {
+		// TODO Auto-generated method stub
+		
+		Connection conn = null;
+		PreparedStatement pstm = null;
+		ResultSet rs = null;
+		List<ClothingInfo> list = new ArrayList<ClothingInfo>();
+		String sql = "SELECT * FROM `warehouse` where `number` is null or `number`=0;";
+		
+		try {
+			conn = DBConn.getConnection();
+			
+			pstm = conn.prepareStatement(sql);
+			
+			rs = pstm.executeQuery();
+			while (rs.next()) {
+				
+				ClothingInfo c = new ClothingInfo();
+				c.setShelves(rs.getString("shelves"));
+				c.setLocation(rs.getString("location"));
+				c.setClothingID(rs.getString("clothingID"));
+				c.setNumber(rs.getInt("number"));
+				
+				list.add(c);
+			}
+			
+			if (pstm != null) {
+				pstm.close();
+			}
+			if (rs != null) {
+				rs.close();
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			return list;
+			//e.printStackTrace();
+		}
+		
+		return list;
+	}
+
+	@Override
+	public boolean updateForPutOnGood(String clothingID, String shelves, String location, int number) {
+		// TODO Auto-generated method stub
+		int flag = 0;
+		Connection conn = null;
+		PreparedStatement pstm = null;
+		String sql = "update `warehouse` set `clothingID`=?, `number`=? where "
+				+ "`shelves`='"+shelves+"' AND"
+				+ " `location`='"+location+"'";
+		
+		try {
+			conn = DBConn.getConnection();
+			
+			pstm = conn.prepareStatement(sql);
+			pstm.setString(1, clothingID);
+			pstm.setInt(2, number);
+			
+			flag = pstm.executeUpdate();
+			
+			if (pstm != null) {
+				pstm.close();
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(flag != 0)
+			return true;
+		return false;
+	}
+
 }

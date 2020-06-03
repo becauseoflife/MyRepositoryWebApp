@@ -109,6 +109,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	                           	<text>库存盘点</text>
 	                        </a>
                         <div class="sb-sidenav-menu-heading">其他</div>
+                        	<a id="my-nav-link" class="nav-link" href="pages/putOnGood.jsp">
+                        		<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            	<text>货品上架</text>
+                        	</a>
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
@@ -135,12 +139,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 								待处理订单
 							</div>
 						  	<div class="card-body">
-						  		<form method="post" action="PickGoodsServlet?action=getOrderInfo">
+						  		<form method="post" action="PickGoodsServlet?action=getOrderInfo" onsubmit="return checkSelectSubmit();"> 
 						  		
 									<select name="select_orderId" id="orderSelect" class="custom-select">
 									</select>
 									<div style="height: 3vh;"></div>
-									<button type="submit" class="btn btn-primary myAdd-btn">查看</button>
+									<button id="lookBtn" type="submit" class="btn btn-primary myAdd-btn">查看</button>
 									
 								</form>
 							</div>
@@ -294,10 +298,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <script type="text/javascript">
       /*错误class  form-control is-invalid
   		正确class  form-control is-valid*/
-  		let flagPickGood = false;	
+  		let flagPickGood = false;
+  		let flagOrderSelect = false;	
   		$(function(){
+  			/* 拣货输入框 */
   			let flagPickInput = false;
-  			
   			let clothingId;
   			$("#pickIdInput").change(function(){
   				clothingId = $("#pickIdInput").val();
@@ -325,13 +330,48 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   					$("#pickIdInput").addClass("form-control is-invalid");
   				}
   			})
+  			
+  			/* 订单选择框 */
+  			let flagSelect = false;
+  			let option;
+  			$("#orderSelect").change(function(){
+  				option = $("#orderSelect").val();
+  				if(option=="--请选择--"||option=="无")
+  				{
+  					$("#orderSelect").removeClass("form-control is-valid")
+    				$("#orderSelect").addClass("form-control is-invalid");
+    				flagSelect=false;
+  				}
+  				else
+  				{
+  					$("#orderSelect").removeClass("form-control is-invalid")
+    				$("#orderSelect").addClass("form-control  is-valid");
+    				flagSelect=true;
+  				}
+  			})
+  			
+  			$("#lookBtn").click(function(){
+  				if(flagSelect)
+  				{
+  					flagOrderSelect = true;
+  				}
+  				else
+  				{
+  					$("#orderSelect").addClass("form-control is-invalid");
+  				}
+  			})
+  			
   		})
   		
   		function pickSubmit(){
   			return flagPickGood;
   		}
+  		
+  		function checkSelectSubmit(){
+  			return flagOrderSelect;
+  		}
     </script>
-    
+    <!-- 模态弹框信息 -->
     <script type="text/javascript">
     	$('#myModal').modal('hide');
     </script>

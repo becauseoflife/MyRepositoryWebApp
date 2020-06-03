@@ -5,7 +5,7 @@ public class Check {
 
 	private String clothingID;		// 服装ID
 	
-	private String location;		// 位置
+	private String position;		// 位置
 	
 	private int number;				// 数量
 	
@@ -19,7 +19,7 @@ public class Check {
 	public Check(String clothingID, String location, int number, int checkNum, int surplus, int loss) {
 		super();
 		this.clothingID = clothingID;
-		this.location = location;
+		this.position = location;
 		this.number = number;
 		this.checkNum = checkNum;
 		this.surplus = surplus;
@@ -34,12 +34,12 @@ public class Check {
 		this.clothingID = clothingID;
 	}
 
-	public String getLocation() {
-		return location;
+	public String getPosition() {
+		return position;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public void setPosition(String location) {
+		this.position = location;
 	}
 
 	public int getNumber() {
@@ -80,7 +80,7 @@ public class Check {
 	public int hashCode() {
 		// TODO Auto-generated method stub
 		int result = 17;
-		result = 31 * result + (location == null ? 0 : location.hashCode());
+		result = 31 * result + (position == null ? 0 : position.hashCode());
 		return result;
 	}
 
@@ -94,7 +94,7 @@ public class Check {
 		if(obj instanceof Check)
 		{
 			Check c = (Check)obj;
-			if(this.location.equals(c.getLocation()))
+			if(this.position.equals(c.getPosition()))
 			{
 				return true;
 			}
@@ -113,7 +113,7 @@ public class Check {
 	public String toString() {
 		// TODO Auto-generated method stub
 		
-		return "位置：" + location + " 盘点：" + checkNum;
+		return "位置：" + position + " 盘点：" + checkNum;
 	}
 	
 }

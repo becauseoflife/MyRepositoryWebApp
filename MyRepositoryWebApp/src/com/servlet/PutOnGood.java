@@ -1,29 +1,28 @@
 package com.servlet;
 
 import java.io.IOException;
-import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.entity.ClothingInfo;
 import com.service.UserService;
 import com.service.impl.UserServiceImp;
 
 /**
- * Servlet implementation class SreachServlet
+ * Servlet implementation class PutOnGood
  */
-@WebServlet("/SearchServlet")
-public class SearchServlet extends HttpServlet {
+@WebServlet("/PutOnGood")
+public class PutOnGood extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	private String action;	// 请求的动作
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public SearchServlet() {
+    public PutOnGood() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -34,12 +33,22 @@ public class SearchServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-		// 用户业务逻辑实现类
-		UserService userService = new UserServiceImp();
+		UserService service = new UserServiceImp();
 		
-		userService.queryClothingById(request);
-		// 重定向
-		response.sendRedirect("pages/home.jsp");
+		if(request.getParameter("action") != null)
+		{
+			this.action = request.getParameter("action");
+			if(action.equals("getEmptyPositon"))
+			{
+				service.getEmptyPositon(request, response);
+			}
+			if(action.equals("putOn"))
+			{
+				service.putOnGood(request, response);
+				response.sendRedirect("pages/putOnGood.jsp");
+			}
+		}
+
 	}
 
 	/**

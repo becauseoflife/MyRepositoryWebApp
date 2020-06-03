@@ -454,9 +454,13 @@ public class UserServiceImp implements UserService {
 		ClothingInfo c = warehouseDBHelper.queryByLocation(shelves, location);
 		
 		// 将服饰对象放入session中
-		if(c!=null)
+		if(c!=null && c.getClothingID()!=null)
 		{
 			session.setAttribute("clothingInfo", c);
+		}
+		else if(c != null && c.getClothingID()==null)
+		{
+			session.setAttribute("message", "位置: <strong>"+c.getShelves()+"-"+c.getLocation()+"</strong>未存放服饰");
 		}
 		else
 		{
@@ -579,6 +583,81 @@ public class UserServiceImp implements UserService {
 		
 		request.getSession().invalidate();		// 销毁session
 	
+	}
+
+
+	@Override
+	public void getEmptyPositon(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		
+		// 获取空位置
+		List<ClothingInfo> emptyPositionList = warehouseDBHelper.queryListEmptyPosition();
+		
+		// 有无空位置标志
+		if(emptyPositionList.size()==0)
+		{
+			request.getSession().setAttribute("hasEmptyPosition", false);
+		}
+		else
+		{
+			request.getSession().setAttribute("hasEmptyPosition", true);
+		}
+		
+		PrintWriter writer;
+		String jsonStr = JSON.toJSONString(emptyPositionList);
+		//System.out.println(jsonStr);
+		try {
+			writer = response.getWriter();
+			writer.write(jsonStr);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+	}
+
+
+	@Override
+	public void putOnGood(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		// 获得上架的位置
+		String position = request.getParameter("select_position");
+		
+		// 获取上架服装的ID和数量
+		String clothingID = request.getParameter("clothingId");
+		int num = Integer.parseInt(request.getParameter("number"));
+		
+		// 查询服饰是否已经存在
+		ClothingInfo c = warehouseDBHelper.queryByClothingID(clothingID);
+		if(c!=null)
+		{
+			String message = "服装: <strong>" + clothingID + "</strong>"
+					+ "<br/>已经存在仓库位置: <strong>"+c.getShelves()+"-"+c.getLocation() +"</strong>"
+					+ "<br/>请到盘点功能进行更新！";
+			session.setAttribute("message", message);
+			return;
+		}
+		
+		// 服饰不存在，存放到仓库数据表中
+		if(c==null)
+		{
+			String[] p = position.split("-");
+			// 更新新数据库
+			if(warehouseDBHelper.updateForPutOnGood(clothingID, p[0], p[1], num))
+			{
+				String message = "上架成功！";
+				session.setAttribute("message", message);
+				return;
+			}
+			else
+			{
+				String message = "上架失败！";
+				session.setAttribute("message", message);
+				return;
+			}
+		}
+		
 	}
 	
 }
