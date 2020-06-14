@@ -1,52 +1,37 @@
 package com.entity;
 
-import java.util.Date;
+import java.util.List;
 
-// 订单类
+import com.mapper.OrderInfo;
+import com.mapper.OrderItemInfo;
+
+/* 订单实体 */
 public class Order {
-	// 订单状态值
-	public static final int UNRESOLVED = 0;			// 未处理
-	public static final int RESOLVED = 1;			// 已处理
+
+	private OrderInfo orderInfo;				// 订单信息
 	
-	private String order_id;		// 订单ID
-	
-	private String username;		// 创建的用户
-	
-	private int state;				// 订单状态
-	
-	private Date create_time;		// 订单创建时间
+	private List<OrderItemInfo> goodsList;		// 订购商品
 
-	
-	public String getOrder_id() {
-		return order_id;
+	public Order(OrderInfo orderInfo, List<OrderItemInfo> goodsList) {
+		super();
+		this.orderInfo = orderInfo;
+		this.goodsList = goodsList;
 	}
 
-	public void setOrder_id(String order_id) {
-		this.order_id = order_id;
+	public OrderInfo getOrderInfo() {
+		return orderInfo;
 	}
 
-	public String getUsername() {
-		return username;
+	public void setOrderInfo(OrderInfo orderInfo) {
+		this.orderInfo = orderInfo;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public List<OrderItemInfo> getGoodsList() {
+		return goodsList;
 	}
 
-	public int getState() {
-		return state;
+	public void setGoodsList(List<OrderItemInfo> goodsList) {
+		this.goodsList = goodsList;
 	}
 
-	public void setState(int state) {
-		this.state = state;
-	}
-
-	public Date getCreate_time() {
-		return create_time;
-	}
-
-	public void setCreate_time(Date create_time) {
-		this.create_time = create_time;
-	}
-	
 }

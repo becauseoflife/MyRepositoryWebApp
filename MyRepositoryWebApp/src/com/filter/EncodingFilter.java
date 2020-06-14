@@ -37,7 +37,7 @@ public class EncodingFilter implements Filter{
 			throws IOException, ServletException {
 		request.setCharacterEncoding("utf-8"); //½«±àÂë¸ÄÎªutf-8
 		response.setContentType("text/html;charset=utf-8");
-		// System.out.println("À¹½Ø²âÊÔ");
+		//System.out.println("±àÂëÀ¹½Ø²âÊÔ");
 		chain.doFilter(request, response);
 	}
 

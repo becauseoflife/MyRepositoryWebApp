@@ -1,2 +1,5 @@
 eclipse.preferences.version=1
-encoding//WebRoot/js/pick_goods.js=UTF-8
+encoding//WebRoot/js/modal/modal_add_user.js=UTF-8
+encoding//WebRoot/modal/modal_add_user.jsp=UTF-8
+encoding//WebRoot/modal/modal_message.jsp=UTF-8
+encoding//WebRoot/pages/error.jsp=UTF-8
