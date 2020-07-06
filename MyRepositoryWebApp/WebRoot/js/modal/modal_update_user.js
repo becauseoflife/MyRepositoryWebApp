@@ -41,7 +41,7 @@ $("#updateUserModal").on("show.bs.modal", function(event){
 	$("#update-email").val(email)
 	
 	// 更新的用户名
-	let action = "UserManagementServlet?action=updateUser&username=" + username
+	let action = "admin/UserManagementServlet?action=updateUser&username=" + username
 	console.log("action" + action)
 	document.getElementById("update-form").action = action
 	

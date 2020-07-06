@@ -1,0 +1,22 @@
+﻿@CHARSET "UTF-8";
+
+/*包含以下四种的链接*/
+a#non-existent-btn {
+    text-decoration: none;
+}
+/*正常的未被访问过的链接*/
+a#non-existent-btn :link {
+    text-decoration: none;
+}
+/*已经访问过的链接*/
+a#non-existent-btn :visited {
+    text-decoration: none;
+}
+/*鼠标划过(停留)的链接*/
+a#non-existent-btn :hover {
+    text-decoration: none;
+}
+/* 正在点击的链接*/
+a#non-existent-btn :active {
+    text-decoration: none;
+}

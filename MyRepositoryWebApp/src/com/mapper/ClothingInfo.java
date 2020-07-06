@@ -2,7 +2,8 @@ package com.mapper;
 
 /* 服装信息实体类 */
 public class ClothingInfo {
-
+	public static final int  LOCATION_NUM = 12;		// 货位总数
+	
 	private String shelves;		// 货架
 	
 	private String location;	// 货位

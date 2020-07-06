@@ -9,9 +9,10 @@ import com.mapper.UserInfo;
 public interface UserAccountService {
 	
 	public UserInfo findByName(String userName) throws SQLException;  		// 用户登录
+	
 	public boolean add(UserInfo userInfo) throws SQLException;				// 用户注册
 	
-	public void outLogin();		// 退出登录
+	public void outLogin();											// 退出登录
 	
 	public List<UserInfo> findAll();
 	

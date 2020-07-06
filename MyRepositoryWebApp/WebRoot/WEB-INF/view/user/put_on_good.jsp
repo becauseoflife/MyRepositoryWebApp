@@ -13,7 +13,7 @@
   <head>
     <base href="<%=basePath%>">
     
-    <title>盘点</title>
+    <title>货品入库</title>
     
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -29,100 +29,52 @@
     
   </head>
   
-  <body class="sb-nav-fixed" onload="return getEmptyPosition();">
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-darks">
-        <a class="navbar-brand" href="SearchUIServlet">仓库管理</a>
-        <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
-        </form>
-        <!-- Navbar-->
-        <ul class="navbar-nav ml-auto ml-md-0">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="">个人信息</a>
-                    <a class="dropdown-item" href="">修改信息</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="OutLoginServlet">退出登录</a>
-                </div>
-            </li>
-        </ul>
-    </nav>
-    <div id="layoutSidenav">
-        <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                <div class="sb-sidenav-menu">
-                    <div class="nav">
-                        <div class="sb-sidenav-menu-heading">功能</div>
-                        	<a id="my-nav-link" class="nav-link" href="SearchUIServlet">
-                        		<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            	<text>库存查询</text>
-                        	</a>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                            	<div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                	订单拣货
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                	<a class="nav-link" href="OrderUIServlet">创建订单</a>
-                                	<a class="nav-link" href="PickUIServlet">拣货操作</a>
-                                </nav>
-                            </div>
-	                        <a id="my-nav-link"  class="nav-link" href="CheckUIServlet">
-	                        	<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-	                           	<text>库存盘点</text>
-	                        </a>
-                        <div class="sb-sidenav-menu-heading">其他</div>
-                        	<a id="my-nav-link" class="nav-link" href="PutOnUIServlet">
-                        		<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            	<text>货品上架</text>
-                        	</a>
-                    </div>
-                </div>
-                <div class="sb-sidenav-footer">
-                    <div class="small">用户:</div>
-                    <%
-                    	UserInfo user = (UserInfo)session.getAttribute("user");
-                    %>
-                    <text><%=user.getUserName() %></text>
-                </div>
-            </nav>
-        </div>
+  <body class="sb-nav-fixed" >
+  
+		<!-- 引入工具栏 -->
+		<jsp:include page="/template/user_menu.jsp"></jsp:include>
+
         <div id="layoutSidenav_content">
 			<main>
 				<div class="container-fluid">
-				<form method="post" action="PutOnGoodServlet?action=putOn" onsubmit="return checkPutOnInput();">
-					<h1 class="mt-4">货品上架</h1>
+				<form method="post" action="user/PutOnGoodServlet?action=putOn" onsubmit="return checkPutOnInput();">
+					<h1 class="mt-4">货品入库</h1>
 					<ol class="breadcrumb mb-4">
-						<li class="breadcrumb-item active">货品上架</li>
+						<li class="breadcrumb-item"><a href="user/SearchUIServlet">仓库管理</a></li>
+						<li class="breadcrumb-item active">货品入库</li>
 					</ol>
-					
-					<div class="card mb-4">
-						<div class="card text-center">
-							<div class="card-header">
-								请选择上架位置
-							</div>
-						  	<div class="card-body">
-								<select name="select_position" id="emptyPosition" class="custom-select">
-								</select>
-							</div>
-						</div>
-					</div>
 
 				<%
-					Object sign = session.getAttribute("hasEmptyPosition");
-					if(sign!=null && (boolean)sign){
+				if(session.getAttribute("emptyPositionList")!=null)
+				{
+					List<ClothingInfo> emptyPositionList = (List<ClothingInfo>)session.getAttribute("emptyPositionList");
+					if(emptyPositionList.size()!=0)
+					{
 				 %>
+						<div class="card mb-4">
+							<div class="card text-center">
+								<div class="card-header">
+									请选择上架位置
+								</div>
+							  	<div class="card-body">
+									<select name="select_position" id="emptyPosition" class="custom-select">
+										<option>--请选择--</option>
+									<%
+										for(ClothingInfo c:emptyPositionList)
+										{
+											String position = c.getShelves() + "-" + c.getLocation();
+									 %>
+											<option value="<%=position%>"><%=position%></option>
+									<%
+										}
+									 %>
+									</select>
+								</div>
+							</div>
+						</div>
 
-					<div class="card mb-4">
+
+					<div id="put-on-input" class="card mb-4">
 						<div class="card-header">
 							请输入输入上架服装的ID和数量
 						</div>
@@ -137,14 +89,30 @@
 									<input id="numInput" type="text" name="number" class="form-control" placeholder="请输入上架数量" aria-label="" aria-describedby="button-addon1">
 								</div>
 								<div class="input-group mb-3">
-									<button id="putOnBtn" type="submit" class="btn btn-primary mySearchBtn">上架</button>
+									<button id="putOnBtn" type="submit" class="btn btn-primary mySearchBtn">入库</button>
 								</div>
 						
 						</div>
 					</div>
 				<%
 					}
+				}
+				else
+				{
 				 %>	
+				 	<div class="card mb-4">
+						<div class="card text-center">
+							<div class="card-header">
+								提示信息
+							</div>
+						  	<div class="card-body">
+								仓库没有空位置		
+							</div>
+						</div>
+					</div>
+				 <%
+				 }
+				  %>
 				</form>	
 				</div>
 			</main>

@@ -37,60 +37,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body class="sb-nav-fixed">
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-darks">
-        <a class="navbar-brand" href="SearchUIServlet">仓库管理</a>
-        <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
-        </form>
-        <!-- Navbar-->
-        <ul class="navbar-nav ml-auto ml-md-0">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="">个人信息</a>
-                    <a class="dropdown-item" href="">修改信息</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="OutLoginServlet">退出登录</a>
-                </div>
-            </li>
-        </ul>
-    </nav>
-    <div id="layoutSidenav">
-        <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                <div class="sb-sidenav-menu">
-                    <div class="nav">
-                        <div class="sb-sidenav-menu-heading">账户</div>
-                        	<a id="my-nav-link" class="nav-link" href="UserManagementServlet?action=getUser">
-                        		<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            	<text>用户管理</text>
-                        	</a>
-                    </div>
-                </div>
-                <div class="sb-sidenav-footer">
-                    <div class="small">用户:</div>
-                    <%
-                    	Admin admin = (Admin)session.getAttribute("admin");
-                    %>
-                    <text><%=admin.getUsername() %></text>
-                </div>
-            </nav>
-        </div>
-
+		<!-- 菜单列表 -->
+		<jsp:include page="/template/admin_menu.jsp"></jsp:include>
+		
         <div id="layoutSidenav_content">
 			<main>
 
 				<div class="container-fluid">
                        <h1 class="mt-4">用户管理</h1>
                        <ol class="breadcrumb mb-4">
-                           <li class="breadcrumb-item"><a href="index.html">仓库管理</a></li>
+                           <li class="breadcrumb-item"><a href="admin/UserManagementServlet?action=getUser">仓库管理</a></li>
                            <li class="breadcrumb-item active">用户管理</li>
                        </ol>
                        <div class="card mb-4">
@@ -134,7 +90,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 									    <a href="#" data-toggle="modal" data-target="#updateUserModal" style="margin: 3px;">
 									    	<image src="images\edit.png" />
 									    </a>
-									    <a href="UserManagementServlet?action=deleteUser&username=<%=u.getUserName() %>" style="margin: 3px;">
+									    <a href="admin/UserManagement?action=deleteUser&username=<%=u.getUserName() %>" style="margin: 3px;" onclick="return delcfm();">
 									    	<image src="images\delete.png" />
 									    </a>
 								    </td>
@@ -179,9 +135,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<jsp:include page="/modal/modal_update_user.jsp"></jsp:include>
 	<jsp:include page="/modal/modal_message.jsp"></jsp:include>
 
-	<script type="text/javascript">
-		
-	</script>
 	
   </body>
 </html>

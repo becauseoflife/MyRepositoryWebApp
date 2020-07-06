@@ -11,7 +11,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   <head>
     <base href="<%=basePath%>">
     
-    <title>主页</title>
+    <title>库存查询</title>
     
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -27,85 +27,23 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body class="sb-nav-fixed">
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-darks">
-        <a class="navbar-brand" href="SearchUIServlet">仓库管理</a>
-        <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
-        </form>
-        <!-- Navbar-->
-        <ul class="navbar-nav ml-auto ml-md-0">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="">个人信息</a>
-                    <a class="dropdown-item" href="">修改信息</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="OutLoginServlet">退出登录</a>
-                </div>
-            </li>
-        </ul>
-    </nav>
-    <div id="layoutSidenav">
-        <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                <div class="sb-sidenav-menu">
-                    <div class="nav">
-                        <div class="sb-sidenav-menu-heading">功能</div>
-                        	<a id="my-nav-link" class="nav-link" href="SearchUIServlet">
-                        		<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            	<text>库存查询</text>
-                        	</a>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                            	<div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                	订单拣货
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                	<a class="nav-link" href="OrderUIServlet">创建订单</a>
-                                	<a class="nav-link" href="PickUIServlet">拣货操作</a>
-                                </nav>
-                            </div>
-	                        <a id="my-nav-link"  class="nav-link" href="CheckUIServlet">
-	                        	<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-	                           	<text>库存盘点</text>
-	                        </a>
-                        <div class="sb-sidenav-menu-heading">其他</div>
-                        	<a id="my-nav-link" class="nav-link" href="PutOnUIServlet">
-                        		<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            	<text>货品上架</text>
-                        	</a>
-                    </div>
-                </div>
-                <div class="sb-sidenav-footer">
-                    <div class="small">用户:</div>
-                    <%
-                    	UserInfo user = (UserInfo)session.getAttribute("user");
-                    %>
-                    <text><%=user.getUserName() %></text>
-                </div>
-            </nav>
-        </div>
+
+		<!-- 引入工具栏 -->
+		<jsp:include page="/template/user_menu.jsp"></jsp:include>
 
         <div id="layoutSidenav_content">
 				<main>
 					<div class="container-fluid">
 						<h1 class="mt-4">库存查询</h1>
 						<ol class="breadcrumb mb-4">
+							<li class="breadcrumb-item"><a href="user/SearchUIServlet">仓库管理</a></li>	
 							<li class="breadcrumb-item active">库存查询</li>
 						</ol>
 
 						<div class="card mb-4">
 							<div class="card-body">输入服装ID查询该服装的数量和位置</div>
 						</div>
-						<form method="post" action="SearchServlet?action=search" onsubmit="return checkSearchInput(this);">
+						<form method="post" action="user/SearchServlet?action=search" onsubmit="return checkSearchInput(this);">
 							<div class="input-group mb-3">
 								<div class="input-group-append">
 									<button id="searchBtn" type="submit" class="btn btn-primary mySearch-btn" style="padding: 0 40px;">查询</button>

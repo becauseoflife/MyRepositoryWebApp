@@ -163,6 +163,48 @@ public class JdbcOrderInfoDaoImpl implements OrderInfoDao {
 		return orderInfo;
 	}
 
+	@Override
+	public List<OrderInfo> findAll() {
+		// TODO Auto-generated method stub
+		Connection conn = null;
+		PreparedStatement pstm = null;
+		ResultSet rs = null;
+		List<OrderInfo> list = new ArrayList<OrderInfo>();
+		String sql = "SELECT * FROM `order`";
+		
+		try {
+			conn = DBConn.getConnection();
+		
+			pstm = conn.prepareStatement(sql);
+
+			rs = pstm.executeQuery();
+			while(rs.next())
+			{
+				OrderInfo o = new OrderInfo();
+				o.setOrder_id(rs.getString("order_id"));
+				o.setUsername(rs.getString("username"));
+				o.setState(rs.getInt("state"));
+				
+				Timestamp t = rs.getTimestamp("create_time");
+				o.setCreate_time(t);
+				
+				list.add(o);
+			}
+			if (pstm != null) {
+				pstm.close();
+			}
+			if (rs != null) {
+				rs.close();
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+
 
 
 }

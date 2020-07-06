@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class SearchUIServlet
  */
-@WebServlet("/SearchUIServlet")
+@WebServlet("/user/SearchUIServlet")
 public class SearchUIServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

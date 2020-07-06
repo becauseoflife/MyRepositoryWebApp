@@ -1,7 +1,8 @@
-package com.servlet;
+package com.servlet.user;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,12 +11,15 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.alibaba.fastjson.JSON;
 import com.entity.Order;
+import com.entity.SearchResult;
 import com.mapper.ClothingInfo;
 import com.mapper.OrderInfo;
 import com.mapper.OrderItemInfo;
+import com.mapper.UserInfo;
 import com.service.OrderService;
 import com.service.ExportService;
 import com.service.WarehouseService;
@@ -26,7 +30,7 @@ import com.service.impl.WarehouseServiceImpl;
 /**
  * Servlet implementation class PickGoodsServlet
  */
-@WebServlet("/PickGoodsServlet")
+@WebServlet("/user/PickGoodsServlet")
 public class PickGoodsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
@@ -59,103 +63,108 @@ public class PickGoodsServlet extends HttpServlet {
 		
 		//System.out.println("action:" + request.getParameter("action"));
 		
-		ExportService service = new ExportServiceImp();
-		
 		if(request.getParameter("action") != null)
 		{
 			this.action = request.getParameter("action");
-			if(action.equals("getSelectOption"))	// 获得未处理订单列表
-			{
-				getOrderSelectOptions(request, response);
-			}
-			if(action.equals("getOrder"))			// 获得订单信息
-			{
-				getOrder(request, response);
-			}
 			if(action.equals("pickGood"))			// 进行拣货操作
 			{
 				pickGood(request, response);
 			}
-			if (action.equals("orderResolved"))		// 订单处理完成
+			if(action.equals("search"))				// 查看商品位置
 			{
-				orderResolved(request, response);
+				searchLocation(request, response);
+			}
+			if(action.equals("update"))			// 获取拣货任务列表
+			{
+				getPickGoodList(request, response);
 			}
 		}
+		
 	}
 
-	private void orderResolved(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void getCheckTask(HttpServletRequest request, HttpServletResponse response) {
 		// TODO Auto-generated method stub
 		
-		// 获取订单
-		Order order = (Order) request.getSession().getAttribute("order");
-		String OrderID = order.getOrderInfo().getOrder_id();
-		
-		// 判断订单是否拣货完毕
-		boolean flag = true;
-		
-		for (OrderItemInfo o : order.getGoodsList()) {
-			if(o.getPick_sign() != OrderItemInfo.PICK)
-				flag = false;
-		}
-		
-		if(flag)	// 订单全部被拣货
-		{
-			orderService.updateSetState(OrderID, OrderInfo.RESOLVED);
-			
-			request.getSession().removeAttribute("order"); 		// 删除session中的订单信息
-			request.getSession().setAttribute("message", "处理成功！");
-			request.getRequestDispatcher("/WEB-INF/view/user/pick_good.jsp").forward(request, response);
-			return;
-		}
-		else	// 	订单有未拣货的产品
-		{
-			request.getSession().setAttribute("message", "还有产品未拣货！");
-			request.getRequestDispatcher("/WEB-INF/view/user/pick_good.jsp").forward(request, response);
-			return;
-		}
-
 	}
 
-	private void getOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void getPickGoodList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		// 获取登录的用户
+		UserInfo user = (UserInfo) session.getAttribute("user");
 		
-		String order_id = request.getParameter("select_orderId");
+		// 查找出自己的拣货任务
+		List<OrderItemInfo> myPickGoodList = orderService.findAllItemByPickUser(user.getUserName(), OrderItemInfo.NOT_PICK);
 		
-		// 获取订单
-		Order order = orderService.getOrder(order_id);
-		
-		// 保存在session中去
-		request.getSession().setAttribute("order", order);
+		//保存到session中
+		session.setAttribute("myPickGoodList", myPickGoodList);
 		request.getRequestDispatcher("/WEB-INF/view/user/pick_good.jsp").forward(request, response);
 	}
 
-	private void getOrderSelectOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void searchLocation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		String clothingID = request.getParameter("ClothingID");
 		
-		// 获取未处理订单
-		List<OrderInfo> list = orderService.findAllByState(OrderInfo.UNRESOLVED);
-
-		String jsonStr = JSON.toJSONString(list);
-		//System.out.println(jsonStr);
-
-		PrintWriter writer = response.getWriter();
-		writer.write(jsonStr);
+		List<ClothingInfo> list = warehouseService.findAllById(clothingID);
+		
+		String message = "";		//返回给前端的信息 
+		
+		// 未查到记录
+		if (list.size()==0) 
+		{
+			message = "未查到商品信息！";
+			session.setAttribute("message", message);
+			
+			request.getRequestDispatcher("/WEB-INF/view/user/pick_good.jsp").forward(request, response);
+			return;			
+		}
+		
+		
+		int sum = 0;	// 衣服总数
+		String position = "";	// 衣服位置
+		
+		for (ClothingInfo c : list) {
+			sum += c.getNumber();
+			position += c.getShelves() + "-" + c.getLocation() + "  "; 
+		}
+		
+		// 构造查询结果
+		message = "商品位置: <strong>" + position + "</strong><br/>" +
+				  "商品总数: <strong>" + sum + "</strong>";
+		// 保存到session中
+		session.setAttribute("message", message);
+		
+		request.getRequestDispatcher("/WEB-INF/view/user/pick_good.jsp").forward(request, response);
+		return;	
 	}
+
 
 	private void pickGood(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
 		// 获取拣货的服装ID和订单列表
 		String clothingID = request.getParameter("clothingId");
-		Order order = (Order) request.getSession().getAttribute("order");
+		List<OrderItemInfo> myPickGoodList = (List<OrderItemInfo>) session.getAttribute("myPickGoodList");
 		
 		String message = null;
 		// 从仓库中获取服饰
 		ClothingInfo clothingInfo = warehouseService.findById(clothingID);
 		
+		// 订单中不存在该商品
+		if(clothingInfo == null)
+		{
+			message = "仓库中不存在该服装！";
+			request.getSession().setAttribute("message", message);
+			request.getRequestDispatcher("/WEB-INF/view/user/pick_good.jsp").forward(request, response);
+			return;
+		}
+		
 		// 从session中的获取订购信息
-		for (OrderItemInfo orderItem : order.getGoodsList()) {
+		for (OrderItemInfo orderItem : myPickGoodList)
+		{
 			// 订单中有该服饰记录
-			if(clothingID.equals(orderItem.getClothingID()))
+			if(clothingID.equals(clothingInfo.getClothingID()))
 			{
 				// 已拣货
 				if(orderItem.getPick_sign() == OrderItemInfo.PICK)
@@ -182,11 +191,14 @@ public class PickGoodsServlet extends HttpServlet {
 					orderItem.setPick_time(new Date());
 					
 					// 更新数据库中该商品的拣货标志和拣货时间
-					orderService.update(orderItem);
+					orderService.updateSetPickSign(orderItem);
 					
 					// 仓库中的数量更新
 					clothingInfo.setNumber(clothingInfo.getNumber()-orderItem.getNumber());
 					warehouseService.updateSetNumber(clothingInfo);
+					
+					// 移除
+					myPickGoodList.remove(orderItem);
 					
 					message = "拣货成功！";
 					request.getSession().setAttribute("message", message);
@@ -203,12 +215,20 @@ public class PickGoodsServlet extends HttpServlet {
 					return;
 				}
 			}
+			else	// 任务不存在该服饰
+			{
+				message = "不存在该货品的拣货任务！";
+				request.getSession().setAttribute("message", message);
+				request.getRequestDispatcher("/WEB-INF/view/user/pick_good.jsp").forward(request, response);
+				return;
+			}
 		}
-		// 订单中不存在该商品
-		message = "订单中不存在该服装！";
+		
+		message = "不存在该货品的拣货任务！";
 		request.getSession().setAttribute("message", message);
 		request.getRequestDispatcher("/WEB-INF/view/user/pick_good.jsp").forward(request, response);
 		return;
+		
 	}
 
 }

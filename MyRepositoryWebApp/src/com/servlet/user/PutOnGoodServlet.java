@@ -1,4 +1,4 @@
-package com.servlet;
+package com.servlet.user;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,7 +22,7 @@ import com.service.impl.WarehouseServiceImpl;
 /**
  * Servlet implementation class PutOnGood
  */
-@WebServlet("/PutOnGoodServlet")
+@WebServlet("/user/PutOnGoodServlet")
 public class PutOnGoodServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
@@ -65,8 +65,7 @@ public class PutOnGoodServlet extends HttpServlet {
 			{
 				putOnGood(request, response);
 				
-				
-				request.getRequestDispatcher("/WEB-INF/view/user/put_on_good.jsp").forward(request, response);
+				request.getRequestDispatcher("PutOnGoodServlet?action=getEmptyPositon").forward(request, response);
 			}
 		}
 
@@ -82,18 +81,23 @@ public class PutOnGoodServlet extends HttpServlet {
 		int num = Integer.parseInt(request.getParameter("number"));
 		
 		// 查询服饰是否已经存在
-		List<ClothingInfo> c = warehouseService.findAllById(clothingID);
-		if(c.size()!=0)
+		List<ClothingInfo> cList = warehouseService.findAllById(clothingID);
+		
+		if(cList.size()!=0)
 		{
-			String message = "服装: <strong>" + clothingID + "</strong>"
-					+ "<br/>已经存在仓库位置: <strong>"+c.get(0).getShelves()+"-"+c.get(0).getLocation() +"</strong>"
-					+ "<br/>请到盘点功能进行更新！";
-			session.setAttribute("message", message);
+			ClothingInfo c = cList.get(0);
+			// 更新数量
+			c.setNumber(c.getNumber() + num);
+			warehouseService.updateSetNumber(c);
+			
+			String p = c.getShelves() + "-" + c.getLocation();
+			
+			session.setAttribute("message", "入库成功!<br/>请放到仓库的 <strong>" + p + "</strong> 上" );
 			return;
 		}
 		
 		// 服饰不存在，存放到仓库数据表中
-		if(c.size()==0)
+		if(cList.size()==0)
 		{
 			String[] p = position.split("-");
 			ClothingInfo updateClo = ClothingInfo.builder()
@@ -110,20 +114,21 @@ public class PutOnGoodServlet extends HttpServlet {
 			// 更新新数据库
 			if(warehouseService.updateSetIdAndNumber(updateClo))
 			{
-				String message = "上架成功！";
+				
+				String message = "入库成功!<br/>请放到仓库的 <strong>" + position + "</strong> 上";
 				session.setAttribute("message", message);
 				return;
 			}
 			else
 			{
-				String message = "上架失败！";
+				String message = "入库失败！";
 				session.setAttribute("message", message);
 				return;
 			}
 		}
 	}
 
-	private void getEmptyPositon(HttpServletRequest request, HttpServletResponse response) {
+	private void getEmptyPositon(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
 		// 获取空位置
@@ -137,9 +142,13 @@ public class PutOnGoodServlet extends HttpServlet {
 		else
 		{
 			request.getSession().setAttribute("hasEmptyPosition", true);
+			request.getSession().setAttribute("emptyPositionList", emptyPositionList);
 		}
 		
-		PrintWriter writer;
+		request.getRequestDispatcher("/WEB-INF/view/user/put_on_good.jsp").forward(request, response);
+		
+		
+/*		PrintWriter writer;
 		String jsonStr = JSON.toJSONString(emptyPositionList);
 		//System.out.println(jsonStr);
 		try {
@@ -148,7 +157,7 @@ public class PutOnGoodServlet extends HttpServlet {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 

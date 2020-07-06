@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class CheckUIServlet
  */
-@WebServlet("/CheckUIServlet")
+@WebServlet("/user/CheckUIServlet")
 public class CheckUIServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

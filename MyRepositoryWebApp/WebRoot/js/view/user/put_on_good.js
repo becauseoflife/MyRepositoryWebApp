@@ -4,7 +4,7 @@
 
 function getEmptyPosition(){
 	$.ajax({
-		url: "PutOnGoodServlet?action=getEmptyPositon",
+		url: "user/PutOnGoodServlet?action=getEmptyPositon",
 		type: "GET",
 		dataType: "json",
 		async: false,
@@ -13,9 +13,14 @@ function getEmptyPosition(){
 			if(res.length == 0)
 			{
 				$("#emptyPosition").append("<option>无</option>");
+				$("#put-on-input").addClass("hidden")
+				$("#put-on-input").removeClass("show")
 			}
 			else
 			{
+				$("#put-on-input").removeClass("hidden")
+				$("#put-on-input").addClass("show")
+				
 				$("#emptyPosition").append("<option>--请选择--</option>");
 				for(let i=0; i<res.length; i++)
 				{
@@ -27,6 +32,8 @@ function getEmptyPosition(){
 		error: function(res){
 			console.log("请求错误");
 			$("#orderSelect").append("<option>请求失败</option>");
+			$("#put-on-input").addClass("hidden")
+			$("#put-on-input").removeClass("show")
 		} 
 	})
 };

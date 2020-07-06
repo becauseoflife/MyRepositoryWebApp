@@ -7,21 +7,22 @@ public class OrderItemInfo {
 
 	public static final int NOT_PICK = 0;		// 未拣货
 	public static final int PICK = 1;			// 已拣货
-	public static final int PICK_FAILED = 2;	// 拣货失败
+
+	public static final int RETURN_PICK = 2;		// 退单且已拣货
+	public static final int RETURN_NOT_PICK = 3;	// 退单且未拣货
+	
 	
 	private String order_id;		// 订单ID
 	
 	private String clothingID;		// 服装ID
-	
-	private String shelves;			// 货架
-	
-	private String location;		// 货位
 	
 	private int number;				// 数量
 	
 	private int pick_sign;			// 拣货标志
 	
 	private Date pick_time;			// 拣货的时间
+	
+	private String pick_user;		// 分配的人员
 
 	
 	
@@ -41,22 +42,6 @@ public class OrderItemInfo {
 		this.clothingID = clothingID;
 	}
 	
-	public String getShelves() {
-		return shelves;
-	}
-
-	public void setShelves(String shelves) {
-		this.shelves = shelves;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
 	public int getNumber() {
 		return number;
 	}
@@ -81,23 +66,29 @@ public class OrderItemInfo {
 		this.pick_time = pick_time;
 	}
 	
-	
+	public String getPick_user() {
+		return pick_user;
+	}
+
+	public void setPick_user(String pick_user) {
+		this.pick_user = pick_user;
+	}
+
 	public OrderItemInfo() {
 		
 	}
 
-	public OrderItemInfo(String order_id, String clothingID, String shelves, String location, int number, int pick_sign,
-			Date pick_time) {
+	public OrderItemInfo(String order_id, String clothingID, int number, int pick_sign, Date pick_time,
+			String pick_user) {
 		super();
 		this.order_id = order_id;
 		this.clothingID = clothingID;
-		this.shelves = shelves;
-		this.location = location;
 		this.number = number;
 		this.pick_sign = pick_sign;
 		this.pick_time = pick_time;
+		this.pick_user = pick_user;
 	}
-	
+
 	public static OrderItemInfo builder(){
 		return new OrderItemInfo();
 	}
@@ -109,16 +100,6 @@ public class OrderItemInfo {
 	
 	public OrderItemInfo clothingID(String clothingID){
 		this.clothingID = clothingID;
-		return this;
-	}
-	
-	public OrderItemInfo shelves(String shelves){
-		this.shelves = shelves;
-		return this;
-	}
-	
-	public OrderItemInfo location(String location){
-		this.location = location;
 		return this;
 	}
 	
@@ -137,7 +118,12 @@ public class OrderItemInfo {
 		return this;
 	}
 	
+	public OrderItemInfo pick_user(String pick_user){
+		this.pick_user = pick_user;
+		return this;
+	}
+	
 	public OrderItemInfo build(){
-		return new OrderItemInfo(order_id, clothingID, shelves, location, number, pick_sign, pick_time);
+		return new OrderItemInfo(order_id, clothingID, number, pick_sign, pick_time, pick_user);
 	}
 }

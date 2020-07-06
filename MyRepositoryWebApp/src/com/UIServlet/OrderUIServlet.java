@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class OrderUIServlet
  */
-@WebServlet("/OrderUIServlet")
+@WebServlet("/admin/OrderUIServlet")
 public class OrderUIServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -28,7 +28,7 @@ public class OrderUIServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		// ×ª·¢
-		request.getRequestDispatcher("/WEB-INF/view/user/order_good.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/view/admin/order_good.jsp").forward(request, response);
 
 	}
 

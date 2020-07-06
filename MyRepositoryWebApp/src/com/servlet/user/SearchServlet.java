@@ -1,4 +1,4 @@
-package com.servlet;
+package com.servlet.user;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,54 +21,58 @@ import com.service.impl.WarehouseServiceImpl;
 /**
  * Servlet implementation class SreachServlet
  */
-@WebServlet("/SearchServlet")
+@WebServlet("/user/SearchServlet")
 public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	    
+
 	private WarehouseService warehouseService = new WarehouseServiceImpl();
-	
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public SearchServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public SearchServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
+
 		// 用户业务逻辑实现类
 		ExportService exportService = new ExportServiceImp();
-		
+
 		String clothingID = request.getParameter("clothingId");
-		
+
 		List<ClothingInfo> list = warehouseService.findAllById(clothingID);
-	
-		int sum = 0;	// 衣服总数
-		List<String> indexList = new ArrayList<String>();	// 衣服位置
-		
+
+		int sum = 0; // 衣服总数
+		List<String> indexList = new ArrayList<String>(); // 衣服位置
+
 		for (ClothingInfo c : list) {
 			sum += c.getNumber();
 			indexList.add(c.getShelves() + "-" + c.getLocation());
 		}
-		
+
 		SearchResult result = new SearchResult(clothingID, sum, indexList);
-		
+
 		// 保存到session中
 		HttpSession session = request.getSession();
-		session.setAttribute("searchResult", result);	
-		
+		session.setAttribute("searchResult", result);
+
 		request.getRequestDispatcher("/WEB-INF/view/user/search_good.jsp").forward(request, response);
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}

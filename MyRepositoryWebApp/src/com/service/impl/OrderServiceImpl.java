@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Ignore;
+
 import com.dao.OrderItemDao;
 import com.dao.OrderInfoDao;
 import com.daofactory.impl.JdbcOrderDaoFactory;
@@ -42,8 +44,6 @@ public class OrderServiceImpl implements OrderService{
 				OrderItemInfo g = OrderItemInfo.builder()
 						.order_id(order.getOrder_id())
 						.clothingID(c.getClothingID())
-						.shelves(c.getShelves())
-						.location(c.getLocation())
 						.number(goods.get(c))
 						.pick_sign(OrderItemInfo.NOT_PICK)
 						.pick_time(null)
@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService{
 
 
 	@Override
-	public boolean update(OrderItemInfo orderItem) {
+	public boolean updateSetPickSign(OrderItemInfo orderItem) {
 		// TODO Auto-generated method stub
 		
 		return orderGoodsDBHelper.updateSetSign(orderItem);
@@ -95,6 +95,81 @@ public class OrderServiceImpl implements OrderService{
 	public boolean updateSetState(String order_id, int state) {
 		// TODO Auto-generated method stub
 		return orderBDHelper.updateSetState(order_id, state);
+	}
+
+
+	@Override
+	public boolean inportOrder(Order order) {
+		// TODO Auto-generated method stub
+		
+		// 添加订单信息到数据库
+		OrderInfo orderInfo = order.getOrderInfo();
+		if(orderBDHelper.add(orderInfo))
+		{
+			// 添加商品信息到数据库
+			for (OrderItemInfo itemInfo : order.getGoodsList())
+			{
+				orderGoodsDBHelper.add(itemInfo);
+			}
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+	}
+
+
+	@Override
+	public boolean add(OrderInfo orderInfo) {
+		// TODO Auto-generated method stub
+		
+		return orderBDHelper.add(orderInfo);
+	}
+
+
+	@Override
+	public boolean add(OrderItemInfo itemInfo) {
+		// TODO Auto-generated method stub
+		return orderGoodsDBHelper.add(itemInfo);
+	}
+
+
+	@Override
+	public List<OrderItemInfo> findAllItemByPickSign(int pickSign) {
+		// TODO Auto-generated method stub
+		
+		return orderGoodsDBHelper.findAllByPickSign(pickSign);
+	}
+
+
+	@Override
+	public boolean updateSetPickUser(OrderItemInfo itemInfo) {
+		// TODO Auto-generated method stub
+		
+		return orderGoodsDBHelper.updateSetPickUser(itemInfo);
+	}
+
+
+	@Override
+	public int sumForNumber(String pick_user, int pick_sign) {
+		// TODO Auto-generated method stub
+		return orderGoodsDBHelper.sumForNumber(pick_user, pick_sign);
+	}
+
+
+	@Override
+	public List<OrderItemInfo> findAllItemByPickUser(String pickUser, int pick_sign) {
+		// TODO Auto-generated method stub
+		return orderGoodsDBHelper.findAllByPickUser(pickUser, pick_sign);
+	}
+
+
+	@Override
+	public List<OrderInfo> findAllOrderInfo() {
+		// TODO Auto-generated method stub
+		return orderBDHelper.findAll();
 	}
 	
 	

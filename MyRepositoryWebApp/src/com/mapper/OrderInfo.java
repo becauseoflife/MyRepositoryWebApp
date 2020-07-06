@@ -7,6 +7,8 @@ public class OrderInfo {
 	// 订单状态值
 	public static final int UNRESOLVED = 0;			// 未处理
 	public static final int RESOLVED = 1;			// 已处理
+	public static final int RETURN = 2;				// 退单
+	public static final int RETUEN_OK = 3;			// 退单处理完成
 	
 	private String order_id;		// 订单ID
 	

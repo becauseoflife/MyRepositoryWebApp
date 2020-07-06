@@ -77,7 +77,7 @@ public class ExportExcelUtil<T> {
 		// 生成一个表格
 		HSSFSheet sheet = workbook.createSheet(title);
 		// 设置表格默认列宽度为15个字节
-		sheet.setDefaultColumnWidth((short)15);
+		sheet.setDefaultColumnWidth((short)20);
 		sheet.setDefaultRowHeight((short)600);
 		
 		// 生成表格标题行的样式
@@ -196,7 +196,7 @@ public class ExportExcelUtil<T> {
 	                    	//System.out.println("width:" + (short)(textValue.toString().getBytes().length * 256));
 	                    	if( AtuoWidth > (short)9000)
 	                    	{
-	                    		sheet.setColumnWidth(0, (short)(textValue.toString().getBytes().length * 256 + 400));	// 第一列宽度
+	                    		sheet.setColumnWidth(1, (short)(textValue.toString().getBytes().length * 256 + 400));	// 第2列宽度
 	                    	}
 							cellContent.setCellValue(richTextString);
 						}
@@ -253,7 +253,7 @@ public class ExportExcelUtil<T> {
 		// 生成一个表格
 		XSSFSheet sheet = workbook.createSheet(title);
 		// 设置表格默认列宽度为15个字节
-		sheet.setDefaultColumnWidth((short)15);
+		sheet.setDefaultColumnWidth((short)20);
 		sheet.setDefaultRowHeight((short)600);
 		
 		// 生成表格标题行的样式
@@ -373,7 +373,7 @@ public class ExportExcelUtil<T> {
 	                    	//System.out.println("width:" + (short)(textValue.toString().getBytes().length * 256));
 	                    	if( AtuoWidth > (short)9000)
 	                    	{
-	                    		sheet.setColumnWidth(0, (short)(textValue.toString().getBytes().length * 256 + 400));	// 第一列宽度
+	                    		sheet.setColumnWidth(1, (short)(textValue.toString().getBytes().length * 256 + 400));	// 第一列宽度
 	                    	}
 							cellContent.setCellValue(richTextString);
 						}

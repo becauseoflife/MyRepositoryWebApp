@@ -10,7 +10,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="UserManagementServlet?action=updateUser" class="form-validate" id="update-form" onsubmit="return checkAllUpdate(this);">
+      <form method="post" action="admin/UserManagementServlet?action=updateUser" class="form-validate" id="update-form" onsubmit="return checkAllUpdate(this);">
 	      <div class="modal-body" style="background-color: rgb(248, 249, 250);">
 	          <div class="form-group">
 	          		<span>用户名:</span>

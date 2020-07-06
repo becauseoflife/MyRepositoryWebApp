@@ -1,7 +1,9 @@
 package com.entity;
 
+import java.io.Serializable;
+
 // 盘点类
-public class Check {
+public class Check implements Serializable{
 
 	private String clothingID;		// 服装ID
 	

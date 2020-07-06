@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class PutOnUIServlet
  */
-@WebServlet("/PutOnUIServlet")
+@WebServlet("/user/PutOnUIServlet")
 public class PutOnUIServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

@@ -1,3 +1,7 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.text.DateFormat"%>
+<%@page import="com.mapper.CheckTaskRecord"%>
+<%@page import="com.mapper.CheckTask"%>
 <%@page import="com.mapper.UserInfo"%>
 <%@page import="com.entity.Check"%>
 <%@page import="com.entity.CheckTable"%>
@@ -13,7 +17,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   <head>
     <base href="<%=basePath%>">
     
-    <title>盘点</title>
+    <title>盘点任务</title>
     
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -22,8 +26,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <link href="css/style.check.css" rel="stylesheet" />
     <link href="css/styles.home.css" rel="stylesheet" />
     <link href="css/myStyles.home.css" rel="stylesheet" />
+    <link href="css/check_good.css" rel="stylesheet"/>
    	<!-- Bootstrap -->
     <link rel="stylesheet" type="text/css" href="resources/bootstrap-4.5.0-dist/css/bootstrap.min.css">
+    
     
     <script src="js/all.min.js" crossorigin="anonymous"></script>
     <script type="text/javascript" language="javascript">
@@ -32,95 +38,76 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     
   </head>
   
-  <body class="sb-nav-fixed">
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-darks">
-        <a class="navbar-brand" href="SearchUIServlet">仓库管理</a>
-        <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
-        </form>
-        <!-- Navbar-->
-        <ul class="navbar-nav ml-auto ml-md-0">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="">个人信息</a>
-                    <a class="dropdown-item" href="">修改信息</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="OutLoginServlet">退出登录</a>
-                </div>
-            </li>
-        </ul>
-    </nav>
-    <div id="layoutSidenav">
-        <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                <div class="sb-sidenav-menu">
-                    <div class="nav">
-                        <div class="sb-sidenav-menu-heading">功能</div>
-                        	<a id="my-nav-link" class="nav-link" href="SearchUIServlet">
-                        		<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            	<text>库存查询</text>
-                        	</a>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                            	<div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                	订单拣货
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                	<a class="nav-link" href="OrderUIServlet">创建订单</a>
-                                	<a class="nav-link" href="PickUIServlet">拣货操作</a>
-                                </nav>
-                            </div>
-	                        <a id="my-nav-link"  class="nav-link" href="CheckUIServlet">
-	                        	<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-	                           	<text>库存盘点</text>
-	                        </a>
-                        <div class="sb-sidenav-menu-heading">其他</div>
-                        	<a id="my-nav-link" class="nav-link" href="PutOnUIServlet">
-                        		<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            	<text>货品上架</text>
-                        	</a>
-                    </div>
-                </div>
-                <div class="sb-sidenav-footer">
-                    <div class="small">用户:</div>
-                    <%
-                    	UserInfo user = (UserInfo)session.getAttribute("user");
-                    %>
-                    <text><%=user.getUserName() %></text>
-                </div>
-            </nav>
-        </div>
+  <body class="sb-nav-fixed" onload="getCheckTasks();">
+ 		<!-- 引入工具栏 -->
+		<jsp:include page="/template/user_menu.jsp"></jsp:include>
 
         <div id="layoutSidenav_content">
 			<main>
 				<div class="container-fluid">
-					<h1 class="mt-4">库存盘点</h1>
+					<h1 class="mt-4">盘点任务</h1>
 					<ol class="breadcrumb mb-4">
-						<li class="breadcrumb-item active">库存盘点</li>
+						<li class="breadcrumb-item"><a href="user/SearchUIServlet">仓库管理</a></li>
+						<li class="breadcrumb-item active">盘点任务</li>
 					</ol>
 
-					<form method="post" action="CheckServlet?action=query" onsubmit="return checkSearchInput();">
+					<div class="card mb-4">
+						<div class="card text-center">
+							<div class="card-header">
+								盘点任务
+							</div>
+						  	<div class="card-body">
+						  		<form method="post" action="user/CheckServlet?action=start" onsubmit="return checkTaskSelect();"> 
+						  		
+									<select name="select_task" id="check-task-select" class="custom-select">
+									</select>
+									<div style="height: 3vh;"></div>
+									<button id="start-btn" type="submit" class="btn btn-primary myAdd-btn">开始</button>
+									
+								</form>
+							</div>
+						</div>
+					</div>
+	
+			<%
+				if(session.getAttribute("task")!=null)
+				{
+					CheckTask task = (CheckTask)session.getAttribute("task");
+					CheckTable checkTable = (CheckTable)session.getAttribute("checkTable");
+					Double progress = Double.valueOf(String.format("%.2f", checkTable.getDataSet().size() / 12.0));
+					double percentage = progress * 100;
+					Double percentageD = Double.valueOf(String.format("%.2f",percentage));
+			 %>
+			 		<!-- 进度 -->
+			 		<div class="card mb-4">					
+						<div class="card-body row">
+							<div class="col-1">任务进度:</div>
+							<div class="col-11">
+								<div class="progress">	
+								  	<div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: <%=percentageD %>%" aria-valuenow="<%=(int)percentage %>" aria-valuemin="0" aria-valuemax="100"><%=percentageD %>%</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<form method="post" action="user/CheckServlet?action=query" onsubmit="return checkSearchInput();">
 						<div class="card mb-4">
 							<div class="card-header">
-								输入库存位置信息查询该位置产品的ID和数量
+								输入仓库1-12货架位置信息查询该位置产品的ID和数量,然后进行12个货架的盘点更新
 							</div>
 							<div class="card-body">
+						
+							
 								<div class="input-group mb-3">
 								  	<label for="staticEmail" class="col-sm-1 col-form-label">货架</label>
-									<input id="shelvesInput" type="text" name="shelves" class="form-control" placeholder="请输入货架" aria-label="" aria-describedby="button-addon2">
+									<input id="shelvesInput" disabled="disabled" type="text" name="task_shelves" value="<%=task.getShelves() %>" class="form-control" aria-label="" aria-describedby="button-addon2">
 								</div>
 								<div class="input-group mb-3">
 								  	<label for="staticEmail" class="col-sm-1 col-form-label">货位</label>
-									<input id="locationInput" type="text" name="location" class="form-control" placeholder="请输入货位" aria-label="" aria-describedby="button-addon1">
+									<input id="locationInput" type="text" name="location" class="form-control" placeholder="请输入货位" >
+											<div class="invalid-feedback" style="margin-left: 100px;">
+								       			货位1-12
+								     		</div>
 								</div>
 								<div class="input-group mb-3">
 									<button id="searchBtn" type="submit" class="btn btn-primary mySearchBtn">查询</button>
@@ -131,8 +118,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					
 					<%
 						ClothingInfo c = (ClothingInfo)session.getAttribute("clothingInfo");
-						if(c!=null){
-						
+						if(c!=null && c.getClothingID() != null)
+						{
 					 %>
 					
 						<div class="card mb-4">
@@ -145,7 +132,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							      	<p>服装ID&nbsp;:&nbsp;<%=c.getClothingID() %></p>
 							      	<p>&nbsp;数&nbsp;量&nbsp;&nbsp;:&nbsp;<%=c.getNumber() %>&emsp;件</p>
 							    	</blockquote>
-							    	<form method="post" action="CheckServlet?action=update" onsubmit="return checkUpdateInput();"> 
+							    	<form method="post" action="user/CheckServlet?action=update" onsubmit="return checkUpdateInput();"> 
 							    		<div class="input-group mb-3">
 											<button id="updateBtn" type="submit" class="btn btn-primary  myUpdate-btn" style="padding: 0 40px;">更新</button>
 										
@@ -157,10 +144,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						</div>
 						
 						<%
-							}
+							} // if -> c
 						%>
 						<% 
-							Object message = session.getAttribute("message");
+							Object message = session.getAttribute("messageTip");
 							if(message!=null){
 						 %>
 							<div class="card mb-4">
@@ -170,18 +157,31 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 								  	</div>
 								  	<div class="card-body">
 								   		<blockquote class="blockquote mb-0">
-								      	<p><%=message %></p>
+								      	<p><%=message %> </br>如果存在请输入</p>
 								    	</blockquote>
+								    	<form action="user/CheckServlet?action=insert" method="post" onsubmit="return checkPutOnInput();"> 
+											<div class="input-group mb-3">
+											  	<label for="staticEmail" class="col-sm-1 col-form-label">服装ID</label>
+												<input id="clothingIdInput" type="text" name="clothingId" class="form-control" placeholder="请输入服装ID" aria-label="" aria-describedby="button-addon2">
+											</div>
+											<div class="input-group mb-3">
+											  	<label for="staticEmail" class="col-sm-1 col-form-label">数量</label>
+												<input id="numInput" type="text" name="number" class="form-control" placeholder="请输入数量" aria-label="" aria-describedby="button-addon1">
+											</div>
+											<div class="input-group mb-3">
+												<button id="putOnBtn" type="submit" class="btn btn-primary mySearchBtn">更新</button>
+												<a id="non-existent-btn" href="user/CheckServlet?action=null"><button id="putOnBtn" type="button" style="margin-left: 20px;" class="btn btn-primary mySearchBtn">不存在</button></a>
+											</div>
+										</form>
 									</div>
 								</div>
 							</div>
 						<%
-							session.removeAttribute("message");
+							session.removeAttribute("messageTip");
 							}
 						 %>
 						 
 						<%
-							CheckTable checkTable = (CheckTable)session.getAttribute("checkTable");
 							if(checkTable!=null && checkTable.getDataSet().size()!=0)
 							{
 						 %>
@@ -198,30 +198,33 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											      		<th scope="col">#</th>
 													    <th scope="col">服装ID</th>
 													    <th scope="col">位置</th>
-													    <th scope="col">数量</th>
+													    <th scope="col">原数量</th>
 													    <th scope="col">盘点</th>
 													    <th scope="col">盘盈</th>
 													    <th scope="col">盘亏</th>
+													    <th scope="col">盘点时间</th>
 													    <!-- <th scope="col">操作</th> -->
 											    	</tr>
 											  	</thead>
 											  	<tbody>
 										<%
 											int row = 0;
-											for(Check check : checkTable.getDataSet())
+											for(CheckTaskRecord record : checkTable.getDataSet())
 											{
 												row++;
-												session.setAttribute(row+"", check);
+												session.setAttribute(row+"", record);
+												DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 										 %>
 											    	<tr>
 											      		<th scope="row"><%=row %></th>
-											      		<td><%=check.getClothingID() %></td>
-											      		<td><%=check.getPosition()%></td>
-											      		<td><%=check.getNumber() %></td>
-											      		<td><%=check.getCheckNum() %></td>
-											      		<td><%=check.getSurplus() %></td>
-											      		<td><%=check.getLoss() %></td>
-											      		<%-- <td><a href="CheckServlet?action=delete?row=<%=row %>" onclick="return delcfm();">删除</a></td> --%>
+											      		<td><%=record.getClothingID() %></td>
+											      		<td><%=record.getPosition()%></td>
+											      		<td><%=record.getNumber() %></td>
+											      		<td><%=record.getCheckNum() %></td>
+											      		<td><%=record.getSurplus() %></td>
+											      		<td><%=record.getLoss() %></td>
+											      		<td><%=df.format(record.getCheck_time()) %></td>
+											      		<%-- <td><a href="user/CheckServlet?action=delete?row=<%=row %>" onclick="return delcfm();">删除</a></td> --%>
 											    	</tr>
 										<%
 											}
@@ -230,7 +233,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											</table>
 			
 										</div>
-										<form method="post" action="CheckServlet?action=exportExcel">
+										<form method="post" action="user/CheckServlet?action=exportExcel">
 											<div class="card-footer text-muted text-left">
 												<button type="submit" class="btn btn-success">导出Excel</button>
 											</div>
@@ -240,6 +243,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						<%
 							}
 						 %>
+						 
+						 
+						 
+						 
+						 
+			<%
+				}	// if -> task != null
+			 %>
 				</div>
 			</main>
             <footer class="py-4 bg-light mt-auto">
@@ -263,6 +274,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     
     <script src="resources/bootstrap-4.5.0-dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
-    <script type="text/javascript" src="js/view/user/check_good.js"></script>
+    <script src="js/view/user/check_good.js"></script>
+    
+    <!-- Modal -->
+	<!--消息提示框 -->
+    <jsp:include page="/modal/modal_message.jsp"></jsp:include>
+    
   </body>
 </html>

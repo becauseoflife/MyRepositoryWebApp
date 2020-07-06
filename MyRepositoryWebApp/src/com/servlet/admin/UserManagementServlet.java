@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.mapper.UserInfo;
 import com.service.UserAccountService;
 import com.service.impl.UserAccountServiceImpl;
-
+ 
 /**
  * Servlet implementation class UserManagementServlet
  */
-@WebServlet("/UserManagementServlet")
+@WebServlet("/admin/UserManagementServlet")
 public class UserManagementServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -49,7 +49,7 @@ public class UserManagementServlet extends HttpServlet {
 		if(request.getParameter("action") != null)
 		{
 			this.action = request.getParameter("action");
-			System.out.println(action);
+			//System.out.println(action);
 			if(action.equals("getUser"))	// 获得用户列表
 			{
 				// 获得全部用户
@@ -75,6 +75,10 @@ public class UserManagementServlet extends HttpServlet {
 			if (action.equals("deleteUser")) {
 				DeleteUser(request, response);
 			}
+		}
+		else
+		{
+			request.getRequestDispatcher("/WEB-INF/view/admin/user_management.jsp").forward(request, response);
 		}
 	}
 

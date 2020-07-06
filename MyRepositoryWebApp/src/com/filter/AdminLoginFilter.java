@@ -1,7 +1,6 @@
 package com.filter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import javax.servlet.http.HttpSession;
 import com.mapper.Admin;
 import com.mapper.UserInfo;
 
-public class LoginFilter implements Filter{
+public class AdminLoginFilter implements Filter {
 
 	private String passUrls;		// 不需要拦截的url
 	
@@ -40,23 +39,24 @@ public class LoginFilter implements Filter{
 		
 		// 不需要检测的url集合
 		List<String> urls = Arrays.asList(passUrls.split(";"));
-		for(String url : urls)
-		{
-			if(servletPath.contains(url)/* || servletPath.contains(".js") || servletPath.contains(".css")*/)
+
+			if(urls.contains(servletPath)/* || servletPath.contains(".js") || servletPath.contains(".css")*/)
 			{
 				chain.doFilter(request, response);
 				return;
 			}
-		}
+
 		
-		System.out.println("拦截了：" + req.getRequestURL());
+		System.out.println("Admin拦截了：" + req.getRequestURL());
 		
 		HttpSession session = req.getSession();
-		UserInfo userInfo = (UserInfo)session.getAttribute("user");
-		Admin admin = (Admin)session.getAttribute("admin");
+
+		Admin admin = null;
+		if(session.getAttribute("admin")!=null)
+			admin = (Admin)session.getAttribute("admin");
 		
 		// 简单判断缓存中是否有用户
-		if(userInfo != null || admin != null){
+		if(admin != null){
 			chain.doFilter(request, response);
 		}else{
 			session.setAttribute("message", "身份过期!<br/>请重新登录!");

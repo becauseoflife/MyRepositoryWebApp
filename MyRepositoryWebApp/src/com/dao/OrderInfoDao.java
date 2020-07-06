@@ -12,4 +12,5 @@ public interface OrderInfoDao {
 	public List<OrderInfo> findAllByState(int state);			// 获取未处理的订单
 	public boolean updateSetState(String order_id, int state);	// 更新处理订单状态
 	
+	public  List<OrderInfo> findAll();		// 查找所有订单
 }

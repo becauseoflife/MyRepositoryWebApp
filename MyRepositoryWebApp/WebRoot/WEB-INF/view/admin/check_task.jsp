@@ -1,0 +1,160 @@
+<%@page import="com.entity.CheckTaskInfo"%>
+<%@page import="com.mapper.CheckTask"%>
+<%@page import="com.mapper.Admin"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.text.DateFormat"%>
+<%@page import="com.entity.ResponseResult"%>
+<%@page import="com.mapper.UserInfo"%>
+<%@ page language="java" import="java.util.*" contentType="text/html; charset=utf-8"%>
+<%
+	String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>盘点任务</title>
+    
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    
+    <link href="css/styles.home.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.login.register.css" id="theme-stylesheet">
+   	<!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="resources/bootstrap-4.5.0-dist/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" type="text/css" href="css/tempusdominus-bootstrap-4.min.css">
+    
+    <script src="js/all.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" language="javascript">
+		 function delcfm(){
+		 	if(!window.confirm("确认要删除？")){
+		 		window.event.returnValue = false;
+		 	}
+		 }
+	 </script>
+    
+  </head>
+  
+  <body class="sb-nav-fixed">
+		<!-- 菜单列表 -->
+		<jsp:include page="/template/admin_menu.jsp"></jsp:include>
+		
+        <div id="layoutSidenav_content">
+			<main>
+
+				<div class="container-fluid">
+                       <h1 class="mt-4">盘点任务</h1>
+                       <ol class="breadcrumb mb-4">
+                           <li class="breadcrumb-item"><a href="admin/UserManagementServlet?action=getUser">仓库管理</a></li>
+                           <li class="breadcrumb-item active">盘点任务</li>
+                       </ol>
+                       <div class="card mb-4">
+                           <div class="card-body">
+                           		<button id="add-check-task" type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">新增盘点任务</button>
+                           </div>
+                       </div>
+                       <div class="card mb-4">
+				
+						<table class="table table-striped text-center">
+						  	<thead class="table-primary">
+						    	<tr>
+							    	<th scope="col">#</th>
+							      	<th scope="col">开始时间</th>
+							      	<th scope="col">结束时间</th>
+							      	<th scope="col">盘点货架</th>
+							      	<th scope="col">盘点人员</th>
+							      	<th scope="col">进度</th>
+							      	<th scope="col">操作</th>
+						    	</tr>
+						  	</thead>
+						  	<tbody id="tbody">
+ 						 <%
+						  if(session.getAttribute("taskInfoList") != null){
+						  		List<CheckTaskInfo> result = (List<CheckTaskInfo>)session.getAttribute("taskInfoList");
+						  		int row = 0;
+						  		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+								df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+						  		for(int i=0; i<result.size(); i++)
+						  		{
+						  			CheckTask c = result.get(i).getCheckTask();
+						  			// 计算进度
+						  			Double progress = Double.valueOf(String.format("%.2f", result.get(i).getTaskRecords().size() / 12.0));
+									double percentage = progress * 100;
+									Double percentageD = Double.valueOf(String.format("%.2f",percentage));
+						  			
+						  			
+						  			row++;
+						  %>
+						   		<tr>
+								    <th scope="row"><%=row %></th>
+								    <td><%=df.format(c.getStart_time()) %></td>
+								    <td><%=df.format(c.getEnd_time()) %></td>
+								    <td><%=c.getShelves() %></td>
+								    <td><%=c.getUsername() %></td>
+								    <td>
+									    <div class="progress">
+										  	<div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: <%=percentageD %>%;" aria-valuenow="<%=(int)percentage %>" aria-valuemin="0" aria-valuemax="100"><%=percentageD %>%</div>
+										</div>
+								    </td>
+								    <td>
+									    <a href="admin/CheckTaskServlet?action=export&index=<%=row-1%>" style="margin: 3px;">
+									    	<image src="images\export.png" />
+									    </a>								    
+									    <a href="admin/CheckTaskServlet?action=deleteTask&id=<%=c.getId()%>" style="margin: 3px;" onclick="return delcfm();">
+									    	<image src="images\delete.png" />
+									    </a>
+								    </td>
+						    	</tr>
+						  <%
+						  		}
+						  	//session.removeAttribute("userList");
+						  	}
+						  	
+						   %>  
+						   	</tbody>
+						</table>
+                           
+                       </div>
+                   </div>
+
+			</main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; PanPan</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+   
+    <!-- JQuery -->
+    <script type="text/javascript" src="resources/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="resources/bootstrap-4.5.0-dist/js/bootstrap.min.js"></script>
+    
+    <script src="resources/bootstrap-4.5.0-dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+	
+	<script src="js/moment.min.js"></script>
+	<script src="js/tempusdominus-bootstrap-4.min.js"></script>
+   
+	
+	<jsp:include page="/modal/modal_add_check_task.jsp"></jsp:include>
+	<jsp:include page="/modal/modal_message.jsp"></jsp:include>
+
+	<script type="text/javascript">
+		
+	</script>
+	
+  </body>
+</html>

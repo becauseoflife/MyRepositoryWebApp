@@ -10,7 +10,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="UserManagementServlet?action=addUser" class="form-validate" id="user-form" onsubmit="return checkAllAdd(this);">
+      <form method="post" action="admin/UserManagementServlet?action=addUser" class="form-validate" id="user-form" onsubmit="return checkAllAdd(this);">
 	      <div class="modal-body" style="background-color: rgb(248, 249, 250);">
 	          <div class="form-group">
 	            	<input id="register-username" class="input-material" type="text" name="registerUsername" placeholder="请输入用户名/姓名" >

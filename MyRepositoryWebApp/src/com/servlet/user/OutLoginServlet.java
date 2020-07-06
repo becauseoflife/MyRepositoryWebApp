@@ -1,4 +1,4 @@
-package com.servlet;
+package com.servlet.user;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -31,7 +31,7 @@ public class OutLoginServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-		request.getSession().invalidate();		// 销毁session
+		request.getSession().removeAttribute("user");		// 销毁user
 		response.sendRedirect("login.jsp");		// 重定向到登录界面
 	}
 

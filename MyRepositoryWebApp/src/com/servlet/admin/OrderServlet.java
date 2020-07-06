@@ -1,10 +1,9 @@
-package com.servlet;
+package com.servlet.admin;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.inject.New;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,21 +12,21 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.entity.Cart;
+import com.mapper.Admin;
 import com.mapper.ClothingInfo;
 import com.mapper.OrderInfo;
-import com.mapper.UserInfo;
-import com.service.OrderService;
 import com.service.ExportService;
+import com.service.OrderService;
 import com.service.WarehouseService;
-import com.service.impl.OrderServiceImpl;
 import com.service.impl.ExportServiceImp;
+import com.service.impl.OrderServiceImpl;
 import com.service.impl.WarehouseServiceImpl;
 import com.util.CreateOrderID;
-
+ 
 /**
  * Servlet implementation class OrderServlet
  */
-@WebServlet("/OrderServlet")
+@WebServlet("/admin/OrderServlet")
 public class OrderServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -85,7 +84,7 @@ public class OrderServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		String message = null;
 		// 获取用户ID
-		String userName = ((UserInfo)request.getSession().getAttribute("user")).getUserName();
+		String userName = ((Admin)request.getSession().getAttribute("admin")).getUsername();
 		// 获取订单
 		Cart cart = (Cart)request.getSession().getAttribute("cart");
 		
@@ -97,7 +96,7 @@ public class OrderServlet extends HttpServlet {
 		{
 			message = "订单订购列表为空！<br/>请先添加商品！";
 			request.getSession().setAttribute("message", message);
-			request.getRequestDispatcher("/WEB-INF/view/user/order_good.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/view/admin/order_good.jsp").forward(request, response);
 		}
 		
 		// 创建订单记录
@@ -122,7 +121,7 @@ public class OrderServlet extends HttpServlet {
 		cart = null;
 		request.getSession().setAttribute("cart", cart);
 		
-		request.getRequestDispatcher("/WEB-INF/view/user/order_good.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/view/admin/order_good.jsp").forward(request, response);
 	}
 
 	// 从订单中删除商品
@@ -145,7 +144,7 @@ public class OrderServlet extends HttpServlet {
 		}
 		
 		request.getSession().setAttribute("message", message);
-		request.getRequestDispatcher("/WEB-INF/view/user/order_good.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/view/admin/order_good.jsp").forward(request, response);
 	}
 
 	// 添加商品到订单中
@@ -167,7 +166,7 @@ public class OrderServlet extends HttpServlet {
 		if(cloList.size() == 0){
 			message = "服装ID"+ clothingID + "不存在！<br/> 请重新输入！";
 			session.setAttribute("message", message);
-			request.getRequestDispatcher("/WEB-INF/view/user/order_good.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/view/admin/order_good.jsp").forward(request, response);
 			return;
 		}
 		
@@ -189,7 +188,7 @@ public class OrderServlet extends HttpServlet {
 					"库存数量："+ total + 
 					"<br/> 订购数量：" + orderNum + "<br/>数量超出库存数量，请重新添加!";
 			session.setAttribute("message", message);
-			request.getRequestDispatcher("/WEB-INF/view/user/order_good.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/view/admin/order_good.jsp").forward(request, response);
 			return;
 		}
 		
@@ -199,6 +198,6 @@ public class OrderServlet extends HttpServlet {
 			message = "添加成功！";
 		}
 		session.setAttribute("message", message);
-		request.getRequestDispatcher("/WEB-INF/view/user/order_good.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/view/admin/order_good.jsp").forward(request, response);
 	}
 }

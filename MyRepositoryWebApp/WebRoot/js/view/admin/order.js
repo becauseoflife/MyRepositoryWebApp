@@ -4,7 +4,7 @@
 
 function getOrderId(){
 	$.ajax({
-		url: "PickGoodsServlet?action=getSelectOption",
+		url: "admin/OrderSearchServlet?action=getSelectOption",
 		type: "GET",
 		dataType: "json",
 		async: false,
@@ -29,7 +29,8 @@ function getOrderId(){
 		} 
 	})
 };
-		
+
+
 /*	
   * 输入框检查
   * 
